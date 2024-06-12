@@ -12,11 +12,14 @@
 
 </head>
 <body>
+
+    <div class="contenedor">
     <h2>REGISTRO EMPPLEADOS</h2>
     <form action= "{% url 'registroEmpleado' %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form }}
         <button type="submit" id="btnEnviar" class=button>ENVIAR</button>
     </form> 
+</div>
 </body>
 </html>

@@ -12,11 +12,13 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/fomulario.css' %}"/>
 </head>
 <body>
+    <div class="contenedor">
     <h1>Editar Empleado</h1>
     <form action="{% url 'actualizarEmpleado' empleado.numero_identificacion %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form }}
         <button type="submit" id="btnEnviar" class="button">Modificar</button>
     </form>
+</div>
 </body>
 </html>
