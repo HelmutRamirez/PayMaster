@@ -57,6 +57,22 @@ def actualizarEmpleado(request, numero_identificacion):
     return render(request, 'listarEmpleado.html', {"get_empleados": empleados})
 
 
+
+def editarEmpresa(request, nit):
+    empresa = Empresa.objects.get(pk=nit)
+    formulario = EmpresaForm(instance=empresa)
+    return render(request, 'editarEmpresa.html', {"form": formulario, "empresa": empresa})
+
+
+def actualizarEmpresa(request, nit):
+    empresa = Empresa.objects.get(pk=nit)
+    formulario = EmpresaForm(request.POST, instance=empresa)
+    if formulario.is_valid():
+        formulario.save()
+    empresa = Empresa.objects.all()
+    return render(request, 'listarEmpresa.html', {"get_empresa": empresa})
+
+
 def eliminarEmpleado(request, numero_identificacion):
     empleado=Empleado.objects.get(pk=numero_identificacion)
     empleado.delete()
