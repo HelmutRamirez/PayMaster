@@ -27,7 +27,7 @@
             <td><img src="{{ empresa.imagen.url }}" alt="Imagen" width="50"> </td>
 
            <td><a class="btn btn-warning" href="{% url 'editarEmpresa' empresa.nit %}">EDITAR</a></td>
-           {% comment %} <td><a class="btn btn-warning" href="{% url 'eliminarempre' empresa.nit %}">Eliminar</a></td> {% endcomment %}
+           <td><a class="btn btn-warning" href="{% url 'eliminarempre' empresa.nit %}">Eliminar</a></td>
                 
         </tr>
         {% endfor %}

@@ -82,3 +82,9 @@ def eliminarEmpleado(request, numero_identificacion):
     empleado.delete()
     emple=Empleado.objects.all() 
     return render (request, 'listarEmpleado.html', { "get_empleados": emple})
+
+def eliminarEmpresa(request, nit):
+    empresa=Empresa.objects.get(pk=nit)
+    empresa.delete()
+    empre=Empresa.objects.all() 
+    return render (request, 'listarEmpresa.html', { "get_empresa": empre})

@@ -14,4 +14,5 @@ urlpatterns = [
     path('listarEmpresa', views.ListarEmpresa, name='ListarEmpresa'),
     path('editarEmpresa/<int:nit>/', views.editarEmpresa, name='editarEmpresa'),
     path('actualizarempre/<int:nit>/', views.actualizarEmpresa, name='actualizarEmpresa'),
+    path('eliminar/<int:nit>/', views.eliminarEmpresa, name='eliminarempre'),
 ]
