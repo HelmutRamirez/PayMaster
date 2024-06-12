@@ -1,33 +1,33 @@
 from django.shortcuts import render  
-from Empresarial.forms import EmpresaForm, EmpleadoForm, UsuariosForm
-from .models import Empresa, Empleado, Usuarios
+from Independientes.forms import IndependienteForm
+from .models import Independiente
 
 # Create your views here.
-def home (request): 
-     return render(request,'empresarial/home.html')
-def crearEmpleado(request):
-    formulario = EmpleadoForm(request.POST, request.FILES)
+def homeIndependientes(request): 
+     return render(request,'independientes/home.html')
+def RegistroIndependi(request):
+    formulario = IndependienteForm(request.POST, request.FILES)
     if formulario.is_valid():
         formula=formulario.save()
-        docu=formula.numero_identificacion
-        usuario=Usuarios(None,docu,0,False,'','Empleado General')
-        usuario.save()
-        formulario = EmpleadoForm()
-    return render(request, 'empresarial/registroEmpleado.html', {'form': formulario, 'mensaje': 'ok'})
-def editarEmpleado(request, numero_identificacion):
-    empleado = Empleado.objects.get(pk=numero_identificacion)
-    formulario = EmpleadoForm(instance=empleado)
-    return render(request, 'empresarial/editarEmpleado.html', {"form": formulario, "empleado": empleado})
+        # docu=formula.numero_identificacion
+        # usuario=Usuarios(None,docu,0,False,'',' General')
+        # usuario.save()
+        formulario = IndependienteForm()
+    return render(request, 'independientes/registroIndependi.html', {'form': formulario, 'mensaje': 'ok'})
+def editarIndependiente(request, numero_identificacion):
+    empleado = Independiente.objects.get(pk=numero_identificacion)
+    formulario = IndependienteForm(instance=empleado)
+    return render(request, 'independientes/editarEmpleado.html', {"form": formulario, "empleado": empleado})
 
-def actualizarEmpleado(request, numero_identificacion):
-    empleado = Empleado.objects.get(pk=numero_identificacion)
-    formulario = EmpleadoForm(request.POST, instance=empleado)
+def actualizarIndependiente(request, numero_identificacion):
+    empleado = Independiente.objects.get(pk=numero_identificacion)
+    formulario = IndependienteForm(request.POST, instance=empleado)
     if formulario.is_valid():
         formulario.save()
-    empleados = Empleado.objects.all()
-    return render(request, 'empresarial/listarEmpleado.html', {"get_empleados": empleados})
+    empleados = Independiente.objects.all()
+    return render(request, 'independientes/listarEmpleado.html', {"get_empleados": empleados})
 def eliminarEmpleado(request, numero_identificacion):
-    empleado=Empleado.objects.get(pk=numero_identificacion)
+    empleado=Independiente.objects.get(pk=numero_identificacion)
     empleado.delete()
-    emple=Empleado.objects.all() 
-    return render (request, 'empresarial/listarEmpleado.html', { "get_empleados": emple})
+    emple=Independiente.objects.all() 
+    return render (request, 'independientes/listarEmpleado.html', { "get_empleados": emple})

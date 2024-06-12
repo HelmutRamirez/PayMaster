@@ -1,7 +1,7 @@
 from django.db import models
 
 # Create your models here.
-class Empleado(models.Model):
+class Independiente(models.Model):
     estado_civil=[
         ('SOLTERO', 'Soltero/a'),
         ('CASADO', 'Casado/a'),
