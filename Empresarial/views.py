@@ -1,4 +1,4 @@
-from django.shortcuts import render 
+from django.shortcuts import render  # type: ignore
 from Empresarial.forms import EmpresaForm, EmpleadoForm, UsuariosForm
 from .models import Empresa, Empleado, Usuarios
 
@@ -10,7 +10,7 @@ def crearEmpresa(request):
     if formulario.is_valid():
         formulario.save()
         formulario = EmpresaForm()
-    return render(request, 'registroEmpleado.html', {'form': formulario, 'mensaje': 'ok'})
+    return render(request, 'registroEmpresa.html', {'form': formulario, 'mensaje': 'ok'})
 
 def crearEmpleado(request):
     formulario = EmpleadoForm(request.POST, request.FILES)
@@ -21,7 +21,6 @@ def crearEmpleado(request):
         usuario.save()
         formulario = EmpleadoForm()
     return render(request, 'registroEmpleado.html', {'form': formulario, 'mensaje': 'ok'})
-
 
 def crearUsuarios(request):
     formulario = UsuariosForm(request.POST, request.FILES)
@@ -36,4 +35,30 @@ def ListarEmpleados(request):
         'get_empleados': get_empleados
     }
     return render(request, 'listarEmpleado.html', data)
-   
+
+def ListarEmpresa(request):
+    get_empresa = Empresa.objects.all()
+    data = {
+        'get_empresa': get_empresa
+    }
+    return render(request, 'listarEmpresa.html', data)
+
+def editarEmpleado(request, numero_identificacion):
+    empleado = Empleado.objects.get(pk=numero_identificacion)
+    formulario = EmpleadoForm(instance=empleado)
+    return render(request, 'editarEmpleado.html', {"form": formulario, "empleado": empleado})
+
+def actualizarEmpleado(request, numero_identificacion):
+    empleado = Empleado.objects.get(pk=numero_identificacion)
+    formulario = EmpleadoForm(request.POST, instance=empleado)
+    if formulario.is_valid():
+        formulario.save()
+    empleados = Empleado.objects.all()
+    return render(request, 'listarEmpleado.html', {"get_empleados": empleados})
+
+
+def eliminarEmpleado(request, numero_identificacion):
+    empleado=Empleado.objects.get(pk=numero_identificacion)
+    empleado.delete()
+    emple=Empleado.objects.all() 
+    return render (request, 'listarEmpleado.html', { "get_empleados": emple})

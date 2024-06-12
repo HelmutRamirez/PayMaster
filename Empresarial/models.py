@@ -1,5 +1,5 @@
-from django.db import models 
-from django.core.validators import MaxValueValidator 
+from django.db import models  # type: ignore
+from django.core.validators import MaxValueValidator  # type: ignore
 
 
 class Empresa(models.Model):
@@ -54,7 +54,6 @@ class Empleado(models.Model):
 
 class Usuarios(models.Model):
     id_rol=[
-        ('Administrador', 'Administrador'),
         ('Contador', 'Contador'),
         ('Auxiliar Contable', 'Auxiliar Contable'),
         ('RRHH', 'RRHH'),

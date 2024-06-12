@@ -1,6 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+<link rel="stylesheet" type="text/css" href="{% static './css/cssTabla.css' %}">
 <head>
     <meta charset="UTF-8">
     <title>Empleados</title>
@@ -10,14 +11,21 @@
     <table border="1">
         <tr>
             <th>Identificación</th>
-            <th>Nombre</th>
-            <th>Apellido</th>
-            <th>Email</th>
+            <th>Primer Nombre</th>
+            <th>Segundo Nombre</th>
+            <th>Primer Apellido</th>
+            <th>Segundo Apellido</th>
+            <th>Estado</th>
+            <th>Tipo Doc</th>
+            <th>Correo</th>
             <th>Celular</th>
-            <th>Salario</th>
-            <th>Tipo Empleado</th>
+            <th>Genero</th>
+            <th>fecha Naci</th>
+            <th>Fecha Exp Docu</th>
+            <th>Empresa</th>
+            <th>calcularSalario</th>
             <th>Imagen</th>
-            <th>Acción</th>
+            <th>Accion</th>
         </tr>
         {% for empleado in get_empleados %}
         <tr>
@@ -37,7 +45,9 @@
 
             <td><img src="{{ empleado.imagen.url }}" alt="Imagen" width="50"> </td>
 
-            {% comment %} <td>
+            <td><a class="btn btn-warning" href="{% url 'editarEmpleado' empleado.numero_identificacion %}">EDITAR</a></td>
+            <td><a class="btn btn-warning" href="{% url 'eliminaremple' empleado.numero_identificacion %}">Eliminar</a></td>
+          {% comment %} <td>
                 <form action="{% url 'calcularSalario' proyecto.numeroIdentificacion %}" method="get">
                     <button type="submit">Calcular Salario P/S</button>
                 </form>
