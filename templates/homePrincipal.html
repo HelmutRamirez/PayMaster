@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 
 <html>
@@ -16,9 +17,11 @@
         <link rel="stylesheet" href="">
     </head>
     <body>
-  <h1>Home/inicio de sesion</h1>
-  <a href="{% url 'homeEmpresa' %}" class="btn btn-info">Home Empresa</a>
-  <a href="{% url 'homeEmpleado' %}" class="btn btn-info">Home Empleados</a>
+  <h1>Home</h1>
+  <a href="{% url 'homeEmpresarial' %}" class="btn btn-info">Home Empresarial</a>
+  {% comment %} <a href="{% url 'independiente' %}" class="btn btn-info">Home Independiente</a> {% endcomment %}
+
+
   
     </body>
 </html>

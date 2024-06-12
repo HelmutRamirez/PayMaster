@@ -4,6 +4,10 @@ from .models import Empresa, Empleado, Usuarios
 
 def home (request): 
      return render(request,'home.html')
+def homeEmpleado (request): 
+     return render(request,'homeEmpleado.html')
+def homeEmpresa (request): 
+     return render(request,'homeEmpresa.html')
 
 def crearEmpresa(request):
     formulario = EmpresaForm(request.POST, request.FILES)
