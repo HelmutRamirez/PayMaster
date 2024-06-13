@@ -54,7 +54,8 @@ class Empleado(models.Model):
     fecha_exp_documento = models.DateField()
     fecha_ingreso = models.DateField( blank=True,null=True)
     nivel_riesgo=models.CharField(max_length=10, choices=nivel_riesgo,blank=True, null=True)
-    empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE) 
+    salario=models.FloatField(blank=True,null=True)
+    empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE,blank=True, null=True) 
     imagen=models.ImageField(upload_to='photos')
 
     def __str__(self):
