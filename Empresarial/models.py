@@ -67,26 +67,21 @@ class Usuarios(models.Model):
     contrasena = models.CharField(max_length=128, null=True)
     id_rol= models.CharField(max_length=30,choices=id_rol) 
     
+  
+
+    
 class Calculos(models.Model):
-    nivel_riesgo = [
-        ('Nivel 1', 'Mínimo'),
-        ('Nivel 2', 'Bajo'),
-        ('Nivel 3', 'Medio'),
-        ('Nivel 4', 'Alto'),
-        ('Nivel 5', 'Máximo'),
-    ]
-
     documento = models.ForeignKey(Empleado, on_delete=models.CASCADE)
-    salud = models.FloatField(blank=True, null=True)
-    pension = models.FloatField(blank=True, null=True)
-    arl = models.FloatField(blank=True, null=True)
-    salarioBase = models.FloatField(blank=True, null=True)
-    cajaCompensacion = models.FloatField(blank=True, null=True)
-    cesantias = models.FloatField(blank=True, null=True)
-    interesCesantias = models.FloatField(blank=True, null=True)
-    vacaciones = models.FloatField(blank=True, null=True)
-    nivel_riesgo = models.CharField(max_length=10, choices=nivel_riesgo, blank=True, null=True)
-
+    salud=models.FloatField(blank=True, null=True)
+    pension=models.FloatField(blank=True,null=True)
+    arl=models.FloatField(blank=True,null=True)
+    salarioBase=models.FloatField(blank=True,null=True)
+    cajaCompensacion=models.FloatField(blank=True,null=True)
+    cesantias=models.FloatField(blank=True,null=True)
+    interesCesantias=models.FloatField(blank=True,null=True)
+    vacaciones=models.FloatField(blank=True,null=True)
+    
+    
 class Novedades(models.Model):
     empleado = models.ForeignKey(Empleado, on_delete=models.CASCADE)
     HorasExDiu=models.IntegerField(validators=[MaxValueValidator(48),MinValueValidator(0)],blank=True,null=True)

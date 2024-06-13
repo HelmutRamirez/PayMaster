@@ -20,12 +20,12 @@
             <th>Correo</th>
             <th>Celular</th>
             <th>Genero</th>
-            <th>Fecha Nacimiento</th>
+            <th>fecha Naci</th>
             <th>Fecha Exp Docu</th>
             <th>Empresa</th>
+            <th>calcularSalario</th>
             <th>Imagen</th>
             <th>Accion</th>
-            <th>Calcular Salario</th>
         </tr>
         {% for empleado in get_empleados %}
         <tr>
@@ -42,14 +42,16 @@
             <td>{{ empleado.fecha_nacimiento }}</td>
             <td>{{ empleado.fecha_exp_documento }}</td>
             <td>{{ empleado.empresa }}</td>
-            <td><img src="{{ empleado.imagen.url }}" alt="Imagen" width="50"></td>
-            <td>
-                <a class="btn btn-warning" href="{% url 'editarEmpleado' empleado.numero_identificacion %}">EDITAR</a>
-                <a class="btn btn-warning" href="{% url 'eliminaremple' empleado.numero_identificacion %}">Eliminar</a>
-            </td>
-            <td>
-                <a class="btn btn-warning" href="{% url 'calcularemple' empleado.numero_identificacion %}">Calcular</a>
-            </td>
+
+            <td><img src="{{ empleado.imagen.url }}" alt="Imagen" width="50"> </td>
+
+            <td><a class="btn btn-warning" href="{% url 'editarEmpleado' empleado.numero_identificacion %}">EDITAR</a></td>
+            <td><a class="btn btn-warning" href="{% url 'eliminaremple' empleado.numero_identificacion %}">Eliminar</a></td>
+          {% comment %} <td>
+                <form action="{% url 'calcularSalario' proyecto.numeroIdentificacion %}" method="get">
+                    <button type="submit">Calcular Salario P/S</button>
+                </form>
+            </td> {% endcomment %}
         </tr>
         {% endfor %}
     </table>
