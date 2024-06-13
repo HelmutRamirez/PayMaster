@@ -15,7 +15,7 @@
 
     <div class="contenedor">
     <h2>REGISTRO Independiente</h2>
-    <form action= "{% url 'registroEmpleado' %}" method="POST" enctype="multipart/form-data">
+    <form action= "{% url 'registrarIndependiente' %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form }}
         <button type="submit" id="btnEnviar" class=button>ENVIAR</button>

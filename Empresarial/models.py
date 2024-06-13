@@ -32,7 +32,7 @@ class Empleado(models.Model):
         ('P', 'Prefiero no decir'),
     ]
 
-    numero_identificacion = models.IntegerField(primary_key=True, max_length=10)
+    numero_identificacion = models.CharField(primary_key=True, max_length=20)
     primer_nombre = models.CharField(max_length=30)
     segundo_nombre = models.CharField(max_length=30, blank=True, null=True)
     primer_apellido = models.CharField(max_length=30)

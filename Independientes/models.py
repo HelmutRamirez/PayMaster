@@ -1,4 +1,8 @@
 from django.db import models
+from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth.models import Permission
+from django.contrib.auth.hashers import check_password as django_check_password
+
 
 # Create your models here.
 class Independiente(models.Model):
@@ -20,7 +24,7 @@ class Independiente(models.Model):
         ('P', 'Prefiero no decir'),
     ]
 
-    numero_identificacion = models.IntegerField(primary_key=True, max_length=10)
+    numero_identificacion = models.CharField(primary_key=True, max_length=20)
     primer_nombre = models.CharField(max_length=30)
     segundo_nombre = models.CharField(max_length=30, blank=True, null=True)
     primer_apellido = models.CharField(max_length=30)
@@ -36,3 +40,22 @@ class Independiente(models.Model):
 
     def __str__(self):
         return self.primer_nombre
+
+class Usuarios(models.Model):
+    id_rol_choices = [
+        ('Independiente', 'Independiente'),
+    ]
+
+    usuario = models.ForeignKey(Independiente, on_delete=models.CASCADE)
+    intentos = models.IntegerField(default=0)
+    estado_u = models.BooleanField(default=True)
+    contrasena = models.CharField(max_length=128, null=True)
+    id_rol = models.CharField(max_length=30, choices=id_rol_choices)
+
+    def set_password(self, raw_password):
+        self.contrasena = make_password(raw_password)
+        self.save()
+
+    def check_password(self, raw_password):
+        return django_check_password(raw_password, self.contrasena)
+    
