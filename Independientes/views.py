@@ -24,7 +24,7 @@ def login_view(request):
                     usua=usuario[0]['numero_identificacion']
                    
                     data={ 'usuario_id':usua}
-                    return render(request, 'independientes/home.html', {'form': form,'independi': indepen,'usuario_id':})
+                    return render(request, 'independientes/home.html', {'form': form,'independi': indepen,'usuario_id':usua})
                 else:
                     messages.error(request, 'Contraseña incorrecta')
             else:

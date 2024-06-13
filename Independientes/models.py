@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.models import Permission
 from django.contrib.auth.hashers import check_password as django_check_password
-
+from django.core.validators import MaxValueValidator,MinValueValidator
 
 # Create your models here.
 class Independiente(models.Model):
@@ -63,7 +63,7 @@ class Usuarios(models.Model):
     
     
 class Calculos(models.Model):
-    documento = models.ForeignKey(Empleados, on_delete=models.CASCADE)
+    documento = models.ForeignKey(Independiente, on_delete=models.CASCADE)
     salud=models.FloatField(blank=True, null=True)
     pension=models.FloatField(blank=True,null=True)
     arl=models.FloatField(blank=True,null=True)
@@ -75,7 +75,7 @@ class Calculos(models.Model):
     
     
 class Novedades(models.Model):
-    empleado = models.ForeignKey(Empleados, on_delete=models.CASCADE)
+    empleado = models.ForeignKey(Independiente, on_delete=models.CASCADE)
     HorasExDiu=models.IntegerField(validators=[MaxValueValidator(48),MinValueValidator(0)],blank=True,null=True)
     HorasExNoc=models.IntegerField(validators=[MaxValueValidator(48),MinValueValidator(0)],blank=True,null=True)
     HorasExFestivaDiu=models.IntegerField(validators=[MaxValueValidator(48),MinValueValidator(0)],blank=True,null=True)

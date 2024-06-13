@@ -1,5 +1,6 @@
 from django.db import models  # type: ignore
-from django.core.validators import MaxValueValidator  # type: ignore
+
+from django.core.validators import MaxValueValidator,MinValueValidator
 
 
 class Empresa(models.Model):
@@ -67,8 +68,6 @@ class Usuarios(models.Model):
     id_rol= models.CharField(max_length=30,choices=id_rol) 
     
   
-
-
 
     
 class Calculos(models.Model):
