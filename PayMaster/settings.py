@@ -43,6 +43,9 @@ INSTALLED_APPS = [
     "crispy_forms",
     "crispy_bootstrap5"
 ]
+LOGIN_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/independiente/home/'
+
 
 CRISPY_ALLOWEB_TEMPLATE_PACKS='bootstrap5'
 CRISPY_TEMPLATE_PACK='bootstrap5'
