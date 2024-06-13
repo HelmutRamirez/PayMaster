@@ -70,3 +70,26 @@ class Usuarios(models.Model):
 
 
 
+    
+class Calculos(models.Model):
+    documento = models.ForeignKey(Empleado, on_delete=models.CASCADE)
+    salud=models.FloatField(blank=True, null=True)
+    pension=models.FloatField(blank=True,null=True)
+    arl=models.FloatField(blank=True,null=True)
+    salarioBase=models.FloatField(blank=True,null=True)
+    cajaCompensacion=models.FloatField(blank=True,null=True)
+    cesantias=models.FloatField(blank=True,null=True)
+    interesCesantias=models.FloatField(blank=True,null=True)
+    vacaciones=models.FloatField(blank=True,null=True)
+    
+    
+class Novedades(models.Model):
+    empleado = models.ForeignKey(Empleado, on_delete=models.CASCADE)
+    HorasExDiu=models.IntegerField(validators=[MaxValueValidator(48),MinValueValidator(0)],blank=True,null=True)
+    HorasExNoc=models.IntegerField(validators=[MaxValueValidator(48),MinValueValidator(0)],blank=True,null=True)
+    HorasExFestivaDiu=models.IntegerField(validators=[MaxValueValidator(48),MinValueValidator(0)],blank=True,null=True)
+    HorasExFestivaNoc=models.IntegerField(validators=[MaxValueValidator(48),MinValueValidator(0)],blank=True,null=True)
+    
+    recargoDiuFes=models.IntegerField(blank=True,null=True)
+    recargoNoc=models.IntegerField(blank=True,null=True)
+    recargoNocFest=models.IntegerField(blank=True,null=True)

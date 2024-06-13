@@ -11,15 +11,23 @@ def login_view(request):
             numero_identificacion = form.cleaned_data['numero_identificacion']
             contrasena = form.cleaned_data['contrasena']
 
-            try:
-                usuario = Usuarios.objects.get(usuario__numero_identificacion=numero_identificacion)
+           
+            usuario = Usuarios.objects.get(usuario__numero_identificacion=numero_identificacion)
+            if usuario:
+                indepen=Independiente.objects.get(pk=numero_identificacion) 
                 if check_password(contrasena, usuario.contrasena):
                     # Autenticación exitosa
-                    request.session['usuario_id'] = usuario.usuario.numero_identificacion
-                    return redirect('homeIndependiente')  # Redirigir a la página de inicio
+                    request.session['estadoSesion'] = True
+                    request.session['usuario_id'] = usuario[0]['numero_identificacion']
+                    request.session['rol'] = usuario.usuario.id_rol
+                   
+                    usua=usuario[0]['numero_identificacion']
+                   
+                    data={ 'usuario_id':usua}
+                    return render(request, 'independientes/home.html', {'form': form,'independi': indepen,'usuario_id':})
                 else:
                     messages.error(request, 'Contraseña incorrecta')
-            except Usuarios.DoesNotExist:
+            else:
                 messages.error(request, 'El usuario no existe')
     else:
         form = LoginForm()
@@ -29,12 +37,6 @@ def login_view(request):
 def inicio_view(request):
     # Aquí puedes implementar la lógica para la página de inicio después de iniciar sesión
     return render(request, 'independientes/home.html')
-
-
-
-
-
-
 
 
 # Create your views here.
@@ -64,6 +66,7 @@ def editarIndependiente(request, numero_identificacion):
     formulario = IndependienteForm(instance=empleado)
     return render(request, 'independientes/editarEmpleado.html', {"form": formulario, "empleado": empleado})
 
+
 def actualizarIndependiente(request, numero_identificacion):
     empleado = Independiente.objects.get(pk=numero_identificacion)
     formulario = IndependienteForm(request.POST, instance=empleado)
@@ -71,6 +74,8 @@ def actualizarIndependiente(request, numero_identificacion):
         formulario.save()
     empleados = Independiente.objects.all()
     return render(request, 'independientes/listarEmpleado.html', {"get_empleados": empleados})
+
+
 def eliminarEmpleado(request, numero_identificacion):
     empleado=Independiente.objects.get(pk=numero_identificacion)
     empleado.delete()
