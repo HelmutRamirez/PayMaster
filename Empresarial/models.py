@@ -32,6 +32,13 @@ class Empleado(models.Model):
         ('O', 'Otro'),
         ('P', 'Prefiero no decir'),
     ]
+    nivel_riesgo=[
+        ('1', 'Nivel 1'),
+        ('2', 'Nivel 2'),
+        ('3', 'Nivel 3'),
+        ('4', 'Nivel 4'),
+        ('5', 'Nivel 5'), 
+    ]
 
     numero_identificacion = models.CharField(primary_key=True, max_length=20)
     primer_nombre = models.CharField(max_length=30)
@@ -45,6 +52,8 @@ class Empleado(models.Model):
     genero = models.CharField(max_length=10,choices=genero)
     fecha_nacimiento = models.DateField()
     fecha_exp_documento = models.DateField()
+    fecha_ingreso = models.DateField( blank=True,null=True)
+    nivel_riesgo=models.CharField(max_length=10, choices=nivel_riesgo,blank=True, null=True)
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE) 
     imagen=models.ImageField(upload_to='photos')
 
@@ -88,7 +97,6 @@ class Novedades(models.Model):
     HorasExNoc=models.IntegerField(validators=[MaxValueValidator(48),MinValueValidator(0)],blank=True,null=True)
     HorasExFestivaDiu=models.IntegerField(validators=[MaxValueValidator(48),MinValueValidator(0)],blank=True,null=True)
     HorasExFestivaNoc=models.IntegerField(validators=[MaxValueValidator(48),MinValueValidator(0)],blank=True,null=True)
-    
     recargoDiuFes=models.IntegerField(blank=True,null=True)
     recargoNoc=models.IntegerField(blank=True,null=True)
     recargoNocFest=models.IntegerField(blank=True,null=True)
