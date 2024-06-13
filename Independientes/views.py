@@ -16,7 +16,7 @@ def login_view(request):
                 if check_password(contrasena, usuario.contrasena):
                     # Autenticación exitosa
                     request.session['usuario_id'] = usuario.usuario.numero_identificacion
-                    return redirect('independientes/home.html')  # Redirigir a la página de inicio
+                    return redirect('homeIndependiente')  # Redirigir a la página de inicio
                 else:
                     messages.error(request, 'Contraseña incorrecta')
             except Usuarios.DoesNotExist:
