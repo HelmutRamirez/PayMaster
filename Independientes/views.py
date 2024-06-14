@@ -1,11 +1,10 @@
 from Independientes.forms import IndependienteForm,LoginForm,PasswordResetForm
 from .models import Independiente, Usuarios,PasswordResetRequest
 from django.shortcuts import render ,redirect, get_object_or_404
-from django.contrib.auth.hashers import check_password,make_password
 from django.contrib import messages
-from django.contrib.auth import logout,authenticate,login
+from django.contrib.auth import logout
 from django.http import JsonResponse, HttpResponseRedirect
-from django.contrib.auth.decorators import login_required
+
 from .forms import RecuperarContrasenaForm
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
@@ -181,6 +180,7 @@ def RegistroIndependi(request):
         usuario.save()
         usuario.set_password(raw_password)     
         formulario = IndependienteForm()
+        return redirect('login') 
     return render(request, 'independientes/registroIndependi.html', {'form': formulario, 'mensaje': 'ok'})
 
 def editarIndependiente(request, numero_identificacion):

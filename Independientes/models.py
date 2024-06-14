@@ -4,7 +4,7 @@ from django.contrib.auth.models import Permission
 from django.contrib.auth.hashers import check_password as django_check_password
 from django.core.validators import MaxValueValidator,MinValueValidator
 from django.utils import timezone
-
+from django.utils.timezone import timedelta
 # Create your models here.
 class Independiente(models.Model):
     estado_civil=[
@@ -51,7 +51,7 @@ class Usuarios(models.Model):
     usuario = models.ForeignKey(Independiente, on_delete=models.CASCADE)
     intentos = models.IntegerField(default=0)
     estado_u = models.BooleanField(default=True)
-    contrasena = models.CharField(max_length=128, null=True)
+    contrasena = models.CharField(max_length=120, null=True)
     id_rol = models.CharField(max_length=30, choices=id_rol_choices)
 
     def set_password(self, raw_password):
@@ -65,8 +65,15 @@ class PasswordResetRequest(models.Model):
     usuario = models.ForeignKey(Independiente, on_delete=models.CASCADE)
     token = models.CharField(max_length=255)
     created_at = models.DateTimeField(default=timezone.now)
+    expires_at = models.DateTimeField(null=True)
+
     used = models.BooleanField(default=False)
 
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            # Es un nuevo objeto, establece la fecha de expiración
+            self.expires_at = self.created_at + timedelta(minutes=15)
+        super().save(*args, **kwargs)
     
     
 class Calculos(models.Model):
