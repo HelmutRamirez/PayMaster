@@ -3,7 +3,15 @@ from Empresarial.forms import EmpresaForm, EmpleadoForm, UsuariosForm
 from .models import Empresa, Empleado, Usuarios
 from django.http import HttpRequest
 from .models import Empleado, Calculos, Novedades
-from .forms import EmpleadoForm, CalculosForm, NovedadesForm
+from .forms import EmpleadoForm
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+
+
+
+
+
 
 class Paginas(HttpRequest):
     def home (request): 

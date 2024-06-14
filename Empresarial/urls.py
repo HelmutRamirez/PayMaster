@@ -17,4 +17,5 @@ urlpatterns = [
     # path('registroCalculos', views.Calculos.registrarCalculos, name='registroCalculos'), 
     path('calcular/<int:numero_identificacion>/', views.Calculos.calcularSalario, name='calcularemple'),
     # path('registrarNovedades', views.Calculos.registrarNovedades, name='registrarNovedades')
+    
 ]

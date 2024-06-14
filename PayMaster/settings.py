@@ -133,6 +133,13 @@ STATICFILES_DIRS=[
     "PayMaster/static",
 ]
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'p4ym4ster@gmail.com'  # Cambiar por tu dirección de correo
+EMAIL_HOST_PASSWORD = 'krwj apcj sols uowd'  # Cambiar por tu contraseña
+
 
 
 # Default primary key field type

@@ -3,6 +3,7 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.models import Permission
 from django.contrib.auth.hashers import check_password as django_check_password
 from django.core.validators import MaxValueValidator,MinValueValidator
+from django.utils import timezone
 
 # Create your models here.
 class Independiente(models.Model):
@@ -60,6 +61,12 @@ class Usuarios(models.Model):
     def check_password(self, raw_password):
         return django_check_password(raw_password, self.contrasena)
     
+class PasswordResetRequest(models.Model):
+    usuario = models.ForeignKey(Independiente, on_delete=models.CASCADE)
+    token = models.CharField(max_length=255)
+    created_at = models.DateTimeField(default=timezone.now)
+    used = models.BooleanField(default=False)
+
     
     
 class Calculos(models.Model):
