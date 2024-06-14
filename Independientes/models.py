@@ -2,8 +2,9 @@ from django.db import models
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.models import Permission
 from django.contrib.auth.hashers import check_password as django_check_password
-
-
+from django.core.validators import MaxValueValidator,MinValueValidator
+from django.utils import timezone
+from django.utils.timezone import timedelta
 # Create your models here.
 class Independiente(models.Model):
     estado_civil=[
@@ -36,6 +37,7 @@ class Independiente(models.Model):
     genero = models.CharField(max_length=10,choices=genero)
     fecha_nacimiento = models.DateField()
     fecha_exp_documento = models.DateField()
+    fecha_ingreso= models.DateField(blank=True, null=True)
     imagen=models.ImageField(upload_to='photos')
 
     def __str__(self):
@@ -49,7 +51,7 @@ class Usuarios(models.Model):
     usuario = models.ForeignKey(Independiente, on_delete=models.CASCADE)
     intentos = models.IntegerField(default=0)
     estado_u = models.BooleanField(default=True)
-    contrasena = models.CharField(max_length=128, null=True)
+    contrasena = models.CharField(max_length=120, null=True)
     id_rol = models.CharField(max_length=30, choices=id_rol_choices)
 
     def set_password(self, raw_password):
@@ -59,3 +61,40 @@ class Usuarios(models.Model):
     def check_password(self, raw_password):
         return django_check_password(raw_password, self.contrasena)
     
+class PasswordResetRequest(models.Model):
+    usuario = models.ForeignKey(Independiente, on_delete=models.CASCADE)
+    token = models.CharField(max_length=255)
+    created_at = models.DateTimeField(default=timezone.now)
+    expires_at = models.DateTimeField(null=True)
+
+    used = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            # Es un nuevo objeto, establece la fecha de expiración
+            self.expires_at = self.created_at + timedelta(minutes=15)
+        super().save(*args, **kwargs)
+    
+    
+class Calculos(models.Model):
+    documento = models.ForeignKey(Independiente, on_delete=models.CASCADE)
+    salud=models.FloatField(blank=True, null=True)
+    pension=models.FloatField(blank=True,null=True)
+    arl=models.FloatField(blank=True,null=True)
+    salarioBase=models.FloatField(blank=True,null=True)
+    cajaCompensacion=models.FloatField(blank=True,null=True)
+    cesantias=models.FloatField(blank=True,null=True)
+    interesCesantias=models.FloatField(blank=True,null=True)
+    vacaciones=models.FloatField(blank=True,null=True)
+    
+    
+class Novedades(models.Model):
+    empleado = models.ForeignKey(Independiente, on_delete=models.CASCADE)
+    HorasExDiu=models.IntegerField(validators=[MaxValueValidator(48),MinValueValidator(0)],blank=True,null=True)
+    HorasExNoc=models.IntegerField(validators=[MaxValueValidator(48),MinValueValidator(0)],blank=True,null=True)
+    HorasExFestivaDiu=models.IntegerField(validators=[MaxValueValidator(48),MinValueValidator(0)],blank=True,null=True)
+    HorasExFestivaNoc=models.IntegerField(validators=[MaxValueValidator(48),MinValueValidator(0)],blank=True,null=True)
+    
+    recargoDiuFes=models.IntegerField(blank=True,null=True)
+    recargoNoc=models.IntegerField(blank=True,null=True)
+    recargoNocFest=models.IntegerField(blank=True,null=True)

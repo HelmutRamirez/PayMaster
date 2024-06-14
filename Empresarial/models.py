@@ -1,5 +1,8 @@
 from django.db import models  # type: ignore
-from django.core.validators import MaxValueValidator  # type: ignore
+
+from django.core.validators import MaxValueValidator,MinValueValidator
+from django.utils import timezone
+
 
 
 class Empresa(models.Model):
@@ -31,6 +34,13 @@ class Empleado(models.Model):
         ('O', 'Otro'),
         ('P', 'Prefiero no decir'),
     ]
+    nivel_riesgo=[
+        ('1', 'Nivel 1'),
+        ('2', 'Nivel 2'),
+        ('3', 'Nivel 3'),
+        ('4', 'Nivel 4'),
+        ('5', 'Nivel 5'), 
+    ]
 
     numero_identificacion = models.CharField(primary_key=True, max_length=20)
     primer_nombre = models.CharField(max_length=30)
@@ -44,7 +54,10 @@ class Empleado(models.Model):
     genero = models.CharField(max_length=10,choices=genero)
     fecha_nacimiento = models.DateField()
     fecha_exp_documento = models.DateField()
-    empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE) 
+    fecha_ingreso = models.DateField( blank=True,null=True)
+    nivel_riesgo=models.CharField(max_length=10, choices=nivel_riesgo,blank=True, null=True)
+    salario=models.FloatField(blank=True,null=True)
+    empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE,blank=True, null=True) 
     imagen=models.ImageField(upload_to='photos')
 
     def __str__(self):
@@ -66,7 +79,27 @@ class Usuarios(models.Model):
     contrasena = models.CharField(max_length=128, null=True)
     id_rol= models.CharField(max_length=30,choices=id_rol) 
     
-  
 
 
-
+    
+class Calculos(models.Model):
+    documento = models.ForeignKey(Empleado, on_delete=models.CASCADE)
+    salud=models.FloatField(blank=True, null=True)
+    pension=models.FloatField(blank=True,null=True)
+    arl=models.FloatField(blank=True,null=True)
+    salarioBase=models.FloatField(blank=True,null=True)
+    cajaCompensacion=models.FloatField(blank=True,null=True)
+    cesantias=models.FloatField(blank=True,null=True)
+    interesCesantias=models.FloatField(blank=True,null=True)
+    vacaciones=models.FloatField(blank=True,null=True)
+    
+    
+class Novedades(models.Model):
+    empleado = models.ForeignKey(Empleado, on_delete=models.CASCADE)
+    HorasExDiu=models.IntegerField(validators=[MaxValueValidator(48),MinValueValidator(0)],blank=True,null=True)
+    HorasExNoc=models.IntegerField(validators=[MaxValueValidator(48),MinValueValidator(0)],blank=True,null=True)
+    HorasExFestivaDiu=models.IntegerField(validators=[MaxValueValidator(48),MinValueValidator(0)],blank=True,null=True)
+    HorasExFestivaNoc=models.IntegerField(validators=[MaxValueValidator(48),MinValueValidator(0)],blank=True,null=True)
+    recargoDiuFes=models.IntegerField(blank=True,null=True)
+    recargoNoc=models.IntegerField(blank=True,null=True)
+    recargoNocFest=models.IntegerField(blank=True,null=True)
