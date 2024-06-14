@@ -1,11 +1,12 @@
 from django.urls import path
 from . import views
 
+
 urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('recuperar-contrasena/', views.GestionLogin.recuperar_contrasena, name='recuperar_contrasena'),
-    path('resetear-contrasena/<str:uidb64>/<str:token>/', views.GestionLogin.resetear_contrasena, name='resetear_contrasena'),
-    path('ponerToken/', views.ponerToken, name='cargar_token'),
+    #path('resetear-contrasena/<str:uidb64>/<str:token>/', views.GestionLogin.resetear_contrasena, name='resetear_contrasena'),
+    path('password-reset/', views.GestionLogin.password_reset, name='password_reset'),
     path('cerrar_sesion/', views.cerrar_sesion, name='cerrar_sesion'),
     path('cerrar_sesion_redirect/', views.cerrar_sesion_redirect, name='cerrar_sesion_redirect'),
     path('home/', views.homeIndependientes, name='homeIndependiente'),

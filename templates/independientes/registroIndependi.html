@@ -1,26 +1,16 @@
-{% load static %}
-
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Menú de Inicio</title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/fomulario.css' %}"/>
-
+    <title>Cambio de Contraseña</title>
 </head>
 <body>
-
-    <div class="contenedor">
-    <h2>REGISTRO Independiente</h2>
-    <form action= "{% url 'registrarIndependiente' %}" method="POST" enctype="multipart/form-data">
+    <h2>Cambio de Contraseña</h2>
+    <form method="post">
         {% csrf_token %}
-        {{ form }}
-        <button type="submit" id="btnEnviar" class=button>ENVIAR</button>
-    </form> 
-    
-</div>
+        {{ form.as_p }}
+
+        <button type="submit">Cambiar Contraseña</button>
+    </form>
 </body>
 </html>
+

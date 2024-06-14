@@ -17,6 +17,8 @@ class LoginForm(forms.Form):
 class RecuperarContrasenaForm(forms.Form):
     numero_identificacion = forms.CharField(max_length=100, label='Número de Identificación')
 
-class RestablecerContrasenaForm(forms.Form):
-    token = forms.CharField(label='Token', max_length=100)
-    nueva_contrasena = forms.CharField(label='Nueva Contraseña', widget=forms.PasswordInput)
+
+class PasswordResetForm(forms.Form):
+    token = forms.CharField(label='Tokenj', max_length=255)
+    new_password = forms.CharField(label='Nueva Contraseña', widget=forms.PasswordInput)
+    confirm_password = forms.CharField(label='Confirmar Contraseña', widget=forms.PasswordInput)

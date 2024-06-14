@@ -1,4 +1,4 @@
-from Independientes.forms import IndependienteForm,LoginForm,RestablecerContrasenaForm
+from Independientes.forms import IndependienteForm,LoginForm,PasswordResetForm
 from .models import Independiente, Usuarios,PasswordResetRequest
 from django.shortcuts import render ,redirect, get_object_or_404
 from django.contrib.auth.hashers import check_password,make_password
@@ -12,12 +12,14 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.http import HttpRequest
 import secrets
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_str
 
-def ponerToken(request):
-    return render(request, 'independientes/resetear_contrasena.html')
-
+def cargar_token(request): 
+        return render(request,'independientes/resetear_contrasena.html')
 
 class GestionLogin:
+
     @staticmethod
     def recuperar_contrasena(request):
         if request.method == 'POST':
@@ -41,53 +43,58 @@ class GestionLogin:
                     send_mail(subject, plain_message, from_email, [to_email], html_message=html_message)
 
                     messages.success(request, 'Se ha enviado un correo electrónico con el token para restablecer tu contraseña.')
-                    return redirect('resetear_contrasena')  # Redirigir a la página de inicio de sesión después de enviar el correo
+                    return redirect('password_reset')  # Redirigir a la página para ingresar el token
+
                 except Independiente.DoesNotExist:
                     messages.error(request, 'No se encontró un usuario con ese número de identificación.')
+
         else:
             form = RecuperarContrasenaForm()
 
         return render(request, 'independientes/recuperar_contrasena.html', {'form': form})
-    
-    
-    
+
+    def password_reset(request):
+        if request.method == 'POST':
+            form = PasswordResetForm(request.POST)
+            if form.is_valid():
+                token = form.cleaned_data['token']
+                new_password = form.cleaned_data['new_password']
+
+                try:
+                    reset_request = PasswordResetRequest.objects.get(token=token, used=False)
+                except PasswordResetRequest.DoesNotExist:
+                    reset_request = None
+
+                if reset_request:
+                    usuario = reset_request.usuario  # Ajusta según tu modelo de PasswordResetRequest
+                    usuario = Usuarios.objects.get(usuario=usuario)
+                    
+                    
+                    usuario.set_password(new_password)
+
+                    reset_request.used = True
+                    reset_request.save()
+
+                    messages.success(request, 'Contraseña actualizada correctamente. Por favor, inicia sesión.')
+                    return redirect('login')  # Redirige a la página de inicio de sesión después de cambiar la contraseña
+
+                else:
+                    messages.error(request, 'El token de restablecimiento de contraseña no es válido o ya ha sido utilizado.')
+            
+            else:
+                messages.error(request, 'Por favor, corrige los errores del formulario.')
+
+        else:
+            form = PasswordResetForm()
+
+        return render(request, 'independientes/password_reset.html', {'form': form})
+
+
+
     @staticmethod
     def generate_token():
         # Generar un token único y seguro
         return secrets.token_urlsafe(20)
-
-
-    @staticmethod
-    def resetear_contrasena(request):
-        if request.method == 'POST':
-            form = RestablecerContrasenaForm(request.POST)
-            if form.is_valid():
-                token = form.cleaned_data['token']
-                nueva_contrasena = form.cleaned_data['nueva_contrasena']
-
-                try:
-                    solicitud = PasswordResetRequest.objects.get(token=token, used=False)
-                    usuario = solicitud.usuario
-
-                    # Cambiar la contraseña del usuario y marcar la solicitud como utilizada
-                    usuario.contrasena = make_password(nueva_contrasena)  # Asegúrate de usar make_password para encriptar la contraseña
-                    usuario.save()
-                    
-                    solicitud.used = True
-                    solicitud.save()
-
-                    messages.success(request, 'Tu contraseña ha sido restablecida con éxito.')
-                    return redirect('resetear_contrasena')  # Redirigir a la página de inicio de sesión
-
-                except PasswordResetRequest.DoesNotExist:
-                    messages.error(request, 'El enlace para restablecer la contraseña no es válido o ha expirado.')
-                    return redirect('recuperar_contrasena')
-
-        else:
-            form = RestablecerContrasenaForm()
-
-        return render(request, 'independientes/resetear_contrasena.html', {'form': form})
-
 
 
 def login_view(request):
