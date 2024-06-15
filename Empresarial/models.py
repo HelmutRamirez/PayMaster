@@ -92,7 +92,19 @@ class Usuarios(models.Model):
     def check_password(self, raw_password):
         return django_check_password(raw_password, self.contrasena)
     
+class PasswordResetRequest(models.Model):
+    usuario = models.ForeignKey(Empleado, on_delete=models.CASCADE)
+    token = models.CharField(max_length=255)
+    created_at = models.DateTimeField(default=timezone.now)
+    expires_at = models.DateTimeField(null=True)
 
+    used = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            # Es un nuevo objeto, establece la fecha de expiración
+            self.expires_at = self.created_at + timedelta(minutes=15)
+        super().save(*args, **kwargs)
 
     
 class Calculos(models.Model):#los campos de esta clase son en dinero osea en flotantes

@@ -1,16 +1,185 @@
 
-from django.shortcuts import render ,get_object_or_404, redirect # type: ignore
-from Empresarial.forms import EmpresaForm, EmpleadoForm, UsuariosForm
-from .models import Empresa, Empleado, Usuarios
-from django.http import HttpRequest
-from .models import Empleado, Calculos, Novedades
-from .forms import EmpleadoForm
+from datetime import date, datetime
+from django.shortcuts import render, get_object_or_404, redirect
+from Empresarial.forms import EmpresaForm, EmpleadoForm,LoginForm, PasswordResetForm,RecuperarContrasenaForm
+from .models import Empresa, Empleado, Usuarios, Calculos, Novedades, PasswordResetRequest
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
-from datetime import datetime, date
+from django.http import HttpRequest, JsonResponse, HttpResponseRedirect
+import secrets
+from django.contrib import messages
+from django.contrib.auth import logout
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_str
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+
+class GestionLogin:
+
+    @staticmethod
+    def recuperar_contrasena(request):
+        if request.method == 'POST':
+            form = RecuperarContrasenaForm(request.POST)
+            if form.is_valid():
+                numero_identificacion = form.cleaned_data['numero_identificacion']
+
+                try:
+                    usuario = Empleado.objects.get(numero_identificacion=numero_identificacion)
+
+                    # Crear una solicitud de recuperación de contraseña y guardarla en la base de datos
+                    solicitud = PasswordResetRequest(usuario=usuario, token=GestionLogin.generate_token())
+                    solicitud.save()
+
+                    # Enviar el correo electrónico con el token para restablecer la contraseña
+                    subject = 'Recuperación de Contraseña'
+                    html_message = render_to_string('empresarial/email/recuperacion_contrasena.html', {'usuario': usuario, 'token': solicitud.token})
+                    plain_message = strip_tags(html_message)
+                    from_email = 'p4ym4ster@gmail.com'  # Cambiar por tu dirección de correo
+                    to_email = usuario.correo
+                    send_mail(subject, plain_message, from_email, [to_email], html_message=html_message)
+
+                    messages.success(request, 'Se ha enviado un correo electrónico con el token para restablecer tu contraseña.')
+                    return redirect('password_reset_empre')  # Redirigir a la página para ingresar el token
+
+                except Empleado.DoesNotExist:
+                    messages.error(request, 'No se encontró un usuario con ese número de identificación.')
+
+        else:
+            form = RecuperarContrasenaForm()
+
+        return render(request, 'empresarial/recuperar_contrasena.html', {'form': form})
+
+    def password_reset(request):
+        if request.method == 'POST':
+            form = PasswordResetForm(request.POST)
+            if form.is_valid():
+                token = form.cleaned_data['token']
+                new_password = form.cleaned_data['new_password']
+
+                try:
+                    reset_request = PasswordResetRequest.objects.get(token=token, used=False)
+                except PasswordResetRequest.DoesNotExist:
+                    reset_request = None
+
+                if reset_request:
+                    usuario = reset_request.usuario  # Ajusta según tu modelo de PasswordResetRequest
+                    usuario = Usuarios.objects.get(usuario=usuario)
+                    
+                    
+                    usuario.set_password(new_password)
+
+                    reset_request.used = True
+                    reset_request.save()
+
+                    usuario.intentos = 0
+                    usuario.estado_u = True
+                    usuario.save()
+                    
+                    messages.success(request, 'Contraseña actualizada correctamente. Por favor, inicia sesión.')
+                    return redirect('loginEmpresa')  # Redirige a la página de inicio de sesión después de cambiar la contraseña
+
+                else:
+                    messages.error(request, 'El token de restablecimiento de contraseña no es válido o ya ha sido utilizado.')
+            
+            else:
+                messages.error(request, 'Por favor, corrige los errores del formulario.')
+
+        else:
+            form = PasswordResetForm()
+
+        return render(request, 'empresarial/password_reset.html', {'form': form})
 
 
+
+    @staticmethod
+    def generate_token():
+            # Generar un token único y seguro
+        return secrets.token_urlsafe(20)
+
+
+    def login_view(request):
+        if request.method == 'POST':
+            form = LoginForm(request.POST)
+            if form.is_valid():
+                numero_identificacion = form.cleaned_data['numero_identificacion']
+                contrasena = form.cleaned_data['contrasena']
+
+                try:
+                    usuario = Usuarios.objects.get(usuario__numero_identificacion=numero_identificacion)
+                    indepe = Empleado.objects.get(pk=numero_identificacion)
+                    permisos = usuario.id_rol
+                    userName = indepe.primer_nombre
+
+                    if usuario.estado_u:
+                        if usuario.check_password(contrasena):
+                           
+                            usuario.intentos = 0
+                            usuario.save()
+                            
+                            request.session['numero_identificacion'] = numero_identificacion
+                            request.session['estadoSesion'] = True
+                            request.session['permisos'] = permisos
+                            request.session['user'] = userName
+
+                            data = {'independi': indepe}
+
+                            if permisos == 'Contador' or permisos == 'Auxiliar Contable' or permisos == 'RRHH':
+                                return render(request, 'empresarial/homeEmpresa.html', data)
+                            elif permisos == 'Empleado General':
+                                return render(request, 'empresarial/Empleado.html', data)
+
+                        else:
+                            
+                            usuario.intentos += 1
+                            usuario.save()
+                            if usuario.intentos >= 3:
+                                usuario.estado_u = False
+                                usuario.save()
+                                messages.error(request, 'La cuenta ha sido inhabilitada debido a múltiples intentos fallidos de inicio de sesión.')
+                            else:
+                                messages.error(request, 'Número de identificación o contraseña incorrectos')
+
+                    else:
+                        messages.error(request, 'La cuenta está inhabilitada.')
+
+                except Usuarios.DoesNotExist:
+                    messages.error(request, 'El usuario no existe')
+
+        else:
+            form = LoginForm()
+
+        return render(request, 'empresarial/login.html', {'form': form})
+# def editarIndependiente(request, numero_identificacion):
+#     try:
+#         empleado = Empleado.objects.get(pk=numero_identificacion)
+#         formulario = IndependienteForm(instance=empleado)
+#         return render(request, 'empresarial/editarIndependi.html', {"form": formulario, "empleado": empleado})
+#     except Independiente.DoesNotExist:
+#         messages.error(request, 'No se encontró el perfil de Independiente asociado')
+#         return redirect('home')
+
+    
+
+
+
+    def cerrar_sesion(request):
+            if request.method == 'POST':
+                logout(request)
+                request.session.flush()  
+                return JsonResponse({'status': 'ok'})
+            return JsonResponse({'status': 'error'}, status=400)
+
+    def cerrar_sesion_redirect(request):
+            logout(request)
+            request.session.flush()
+            return redirect('loginEmpresa') 
+        
+def keep_session_alive(request):
+    if request.method == 'GET':
+        return JsonResponse({'status': 'Session is alive'})
+    else:
+        return JsonResponse({'status': 'Method not allowed'}, status=405)
 
 
 
@@ -19,8 +188,14 @@ class Paginas(HttpRequest):
         return render(request,'empresarial/home.html')
     def homeEmpleado (request): 
         return render(request,'empresarial/homeEmpleado.html')
-    def homeEmpresa (request): 
-        return render(request,'empresarial/homeEmpresa.html')
+    def homeEmpresa(request):
+            numero_identificacion = request.session.get('numero_identificacion')
+            try:
+                independi = Empleado.objects.get(pk=numero_identificacion)
+                return render(request, 'empresarial/homeEmpresa.html', {'independi': independi})
+            except Empleado.DoesNotExist:
+                messages.error(request, 'No se encontró el perfil de Empleado asociado')
+                return redirect('loginEmpresa')
 
 class GestionEmpleado(HttpRequest):
    
@@ -43,11 +218,14 @@ class GestionEmpleado(HttpRequest):
             return redirect('homeEmpleado') 
         return render(request, 'empresarial/registroEmpleado.html', {'form': formulario, 'mensaje': 'ok'})
 
- 
-    def ListarEmpleados(request):
-        get_empleados = Empleado.objects.all()
+    
+    def ListarEmpleados(request,nit):
+
+        empresa = Empresa.objects.get(pk=nit)
+        get_empleados = Empleado.objects.filter(empresa=empresa)
         data = {
-            'get_empleados': get_empleados
+            'get_empleados': get_empleados,
+            'empresa': empresa  
         }
         return render(request, 'empresarial/listarEmpleado.html', data)
     
