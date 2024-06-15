@@ -37,7 +37,6 @@ class Independiente(models.Model):
     genero = models.CharField(max_length=10,choices=genero)
     fecha_nacimiento = models.DateField()
     fecha_exp_documento = models.DateField()
-    fecha_ingreso= models.DateField(blank=True, null=True)
     imagen=models.ImageField(upload_to='photos')
 
     def __str__(self):

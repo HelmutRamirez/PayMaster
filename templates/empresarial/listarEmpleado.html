@@ -47,11 +47,8 @@
 
             <td><a class="btn btn-warning" href="{% url 'editarEmpleado' empleado.numero_identificacion %}">EDITAR</a></td>
             <td><a class="btn btn-warning" href="{% url 'eliminaremple' empleado.numero_identificacion %}">Eliminar</a></td>
-          {% comment %} <td>
-                <form action="{% url 'calcularSalario' proyecto.numeroIdentificacion %}" method="get">
-                    <button type="submit">Calcular Salario P/S</button>
-                </form>
-            </td> {% endcomment %}
+            <td><a class="btn btn-warning" href="{% url 'calcularemple' empleado.numero_identificacion %}" >Calcular</td>
+      
         </tr>
         {% endfor %}
     </table>

@@ -106,13 +106,17 @@ def login_view(request):
             try:
                 # Busca el usuario por número de identificación en tu modelo personalizado
                 usuario = Usuarios.objects.get(usuario__numero_identificacion=numero_identificacion)
+                indepe = Independiente.objects.get(pk=numero_identificacion)
                 permisos=usuario.id_rol
+                userName=indepe.primer_nombre
               
                 if usuario and usuario.check_password(contrasena):
                     # Autenticación exitosa
                     request.session['numero_identificacion'] = numero_identificacion
                     request.session['estadoSesion'] = True
                     request.session['permisos'] = permisos
+                    request.session['user'] = userName
+
 
                     # Redirige al usuario a la página deseada después del inicio de sesión
                     return redirect('homeIndependiente')
@@ -193,7 +197,7 @@ def actualizarIndependiente(request, numero_identificacion):
     formulario = IndependienteForm(request.POST, instance=independiente)
     if formulario.is_valid():
         formulario.save()
-    independiente = Independiente.objects.all()
+    independiente = Independiente.objects.get(pk=numero_identificacion)
     return render(request, 'independientes/home.html', {"get_empleados": independiente})
 
 

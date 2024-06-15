@@ -14,24 +14,28 @@
             <th>Salud</th>
             <th>Pensión</th>
             <th>ARL</th>
-            <th>Salario Base</th>
+            <th>Transporte</th>
+            <th>SENA</th>
+            <th>ICBF</th>
             <th>Caja de Compensación</th>
             <th>Cesantías</th>
             <th>Intereses de Cesantías</th>
             <th>Vacaciones</th>
-            <th>Nivel de Riesgo</th>
+            <th>Días de Vacaciones</th>
         </tr>
         <tr>
-            <td>{{ calculo.documento.numero_identificacion }}</td>
-            <td>{{ calculo.salud }}</td>
-            <td>{{ calculo.pension }}</td>
-            <td>{{ calculo.arl }}</td>
-            <td>{{ calculo.salarioBase }}</td>
-            <td>{{ calculo.cajaCompensacion }}</td>
-            <td>{{ calculo.cesantias }}</td>
-            <td>{{ calculo.interesCesantias }}</td>
-            <td>{{ calculo.vacaciones }}</td>
-            <td>{{ calculo.get_nivel_riesgo_display }}</td>
+            <td>{{ empleado }}</td>
+            <td>{{ salud }}</td>
+            <td>{{ pension }}</td>
+            <td>{{ arl }}</td>
+            <td>{{ transporte }}</td>
+            <td>{{ sena }}</td>
+            <td>{{ ICBF }}</td>
+            <td>{{ CajaCompensa }}</td>
+            <td>{{ cesantias }}</td>
+            <td>{{ intereses_cesantias }}</td>
+            <td>{{ valor_vacaciones }}</td>
+            <td>{{ dias_vacaciones }}</td>
         </tr>
     </table>
     <a href="{% url 'ListarEmpleados' %}">Volver a la lista de empleados</a>
