@@ -1,11 +1,10 @@
 from Independientes.forms import IndependienteForm,LoginForm,PasswordResetForm
-from .models import Independiente, Usuarios,PasswordResetRequest
+from .models import DatosCalculos, Independiente, Usuarios,PasswordResetRequest
 from django.shortcuts import render ,redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.http import JsonResponse, HttpResponseRedirect
-
-from .forms import RecuperarContrasenaForm
+from .forms import DatosCalculosForm, RecuperarContrasenaForm
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
@@ -165,10 +164,6 @@ def cerrar_sesion_redirect(request):
 
 
 
-
-
-
-
 def RegistroIndependi(request):
     formulario = IndependienteForm(request.POST, request.FILES)
     if formulario.is_valid():
@@ -182,7 +177,9 @@ def RegistroIndependi(request):
             id_rol='Independiente'
         )
         usuario.save()
-        usuario.set_password(raw_password)     
+        usuario.set_password(raw_password)  
+        datos_calculos=DatosCalculos(documento=formula)
+        datos_calculos.save()   
         formulario = IndependienteForm()
         return redirect('login') 
     return render(request, 'independientes/registroIndependi.html', {'form': formulario, 'mensaje': 'ok'})
@@ -206,3 +203,111 @@ def eliminarEmpleado(request, numero_identificacion):
     independiente.delete()
     independientes=Independiente.objects.all() 
     return render (request, 'independientes/listarEmpleado.html', { "get_empleados": independientes})
+
+class CalculosGenerales(HttpRequest):
+    def calcular_aportes(request, numero_identificacion):
+        
+            independiente = Independiente.objects.get(pk=numero_identificacion)
+
+# Busca la instancia de DatosCalculos relacionada con el independiente
+            try:
+                datos_calculos = DatosCalculos.objects.get(documento=independiente)
+            except DatosCalculos.DoesNotExist:
+                datos_calculos = None
+
+            if request.method == 'POST':
+                form = DatosCalculosForm(request.POST, instance=datos_calculos)
+                if form.is_valid():
+                    # Asigna la relación con independiente si es una nueva instancia
+                    calculos = form.save(commit=False)
+                    if datos_calculos is None:
+                        calculos.documento = independiente
+                    calculos.save()
+                    # Aquí puedes redirigir a otra página o renderizar una respuesta
+          
+                datos_calculos=DatosCalculos.objects.filter(documento=independiente)#esto es para traer los datos                 
+                
+                for objeto in datos_calculos:
+                    
+                    salario_base = objeto.salarioBase
+                    nivel_arl = objeto.arl
+                    ccf = objeto.CCF
+                    
+                
+                ibc = salario_base * 0.40
+                salud = ibc * 0.125
+                pension = ibc * 0.16
+                
+                
+             
+                # fsp =fsp
+            
+                arl = CalculosGenerales.calcular_arl (ibc,nivel_arl)
+                
+                
+                if ccf == 'Si':
+                    ccf = ibc * 0.04
+                else:
+                    ccf = 0
+                
+                salud = salud
+                pension = pension
+                # fsp = fsp
+                
+                context = {
+                    'independiente': independiente,
+                    'salario_base': salario_base,
+                    'ibc': ibc,
+                    'salud': salud,
+                    'pension': pension,
+                    'arl': arl,
+                    'ccf': ccf,
+                    # 'fsp': fsp
+                }
+                
+                return render(request, 'independientes/resultado_calculos.html', context)
+            
+            
+            else:
+                form = DatosCalculosForm()
+        
+            return render(request, 'independientes/calcular_aportes.html', {'form': form, 'independiente': independiente})
+    
+
+    # def calcular_fsp(ibc):
+    #         smmlv = 1300000  
+    #         if 4 * smmlv <= ibc < 16 * smmlv:
+    #             return ibc * 0.01
+    #         elif 16 * smmlv <= ibc < 17 * smmlv:
+    #             return ibc * 0.012
+    #         elif 17 * smmlv <= ibc < 18 * smmlv:
+    #             return ibc * 0.014
+    #         elif 18 * smmlv <= ibc < 19 * smmlv:
+    #             return ibc * 0.016
+    #         elif 19 * smmlv <= ibc < 20 * smmlv:
+    #             return ibc * 0.018
+    #         elif ibc >= 20 * smmlv:
+    #             return ibc * 0.02
+    #         else:
+    #             return 0
+
+    def calcular_arl(ibc, arl_nivel):
+        
+        if arl_nivel == '1':
+                arl = ibc * 0.00522
+        elif arl_nivel == '2':
+                arl = ibc * 0.01044
+        elif arl_nivel == '3':
+                arl = ibc * 0.02436
+        elif arl_nivel == '4':
+                arl = ibc * 0.04350
+        elif arl_nivel == '5':
+                arl = ibc * 0.06960
+        elif arl_nivel == '0':
+                arl = 0
+        return (arl)
+        
+
+
+      
+

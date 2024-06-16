@@ -1,6 +1,6 @@
 
 from django import forms   # type: ignore 
-from .models import Independiente
+from .models import Independiente, DatosCalculos
 
 
 class IndependienteForm(forms.ModelForm):
@@ -21,4 +21,10 @@ class RecuperarContrasenaForm(forms.Form):
 class PasswordResetForm(forms.Form):
     token = forms.CharField(label='Tokenj', max_length=255)
     new_password = forms.CharField(label='Nueva Contraseña', widget=forms.PasswordInput)
+    
     confirm_password = forms.CharField(label='Confirmar Contraseña', widget=forms.PasswordInput)
+    
+class DatosCalculosForm(forms.ModelForm):
+    class Meta:
+        model = DatosCalculos
+        fields = ['salarioBase', 'ibc', 'salud', 'pension', 'arl', 'CCF']
