@@ -1,14 +1,13 @@
 from django.db import models  # type: ignore
-from django.core.validators import MaxValueValidator,MinValueValidator
-from django.utils import timezone
-from django.db import models
-from django.contrib.auth.hashers import make_password, check_password
-from django.contrib.auth.models import Permission
-from django.contrib.auth.hashers import check_password as django_check_password
-from django.core.validators import MaxValueValidator,MinValueValidator
-from django.utils import timezone
-from django.utils.timezone import timedelta
-# Create your models here.
+from django.core.validators import MaxValueValidator,MinValueValidator # type: ignore
+from django.utils import timezone # type: ignore
+from django.db import models # type: ignore
+from django.contrib.auth.hashers import make_password, check_password # type: ignore
+from django.contrib.auth.models import Permission # type: ignore
+from django.contrib.auth.hashers import check_password as django_check_password # type: ignore
+from django.core.validators import MaxValueValidator,MinValueValidator # type: ignore
+from django.utils import timezone # type: ignore
+from django.utils.timezone import timedelta # type: ignore
 
 
 class Empresa(models.Model):
