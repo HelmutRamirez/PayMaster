@@ -1,19 +1,19 @@
 
 from datetime import date, datetime
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect # type: ignore
 from Empresarial.forms import EmpresaForm, EmpleadoForm,LoginForm, PasswordResetForm,RecuperarContrasenaForm
 from .models import Empresa, Empleado, Usuarios, Calculos, Novedades, PasswordResetRequest
-from django.core.mail import send_mail
-from django.template.loader import render_to_string
-from django.utils.html import strip_tags
-from django.http import HttpRequest, JsonResponse, HttpResponseRedirect
+from django.core.mail import send_mail # type: ignore
+from django.template.loader import render_to_string # type: ignore
+from django.utils.html import strip_tags # type: ignore
+from django.http import HttpRequest, JsonResponse, HttpResponseRedirect # type: ignore
 import secrets
-from django.contrib import messages
-from django.contrib.auth import logout
-from django.utils.http import urlsafe_base64_decode
-from django.utils.encoding import force_str
-from django.http import JsonResponse
-from django.views.decorators.http import require_POST
+from django.contrib import messages # type: ignore
+from django.contrib.auth import logout # type: ignore
+from django.utils.http import urlsafe_base64_decode # type: ignore
+from django.utils.encoding import force_str # type: ignore
+from django.http import JsonResponse # type: ignore
+from django.views.decorators.http import require_POST # type: ignore
 
 class GestionLogin:
 
