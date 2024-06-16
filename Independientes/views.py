@@ -232,9 +232,13 @@ class CalculosGenerales(HttpRequest):
                     salario_base = objeto.salarioBase
                     nivel_arl = objeto.arl
                     ccf = objeto.CCF
+                    porcentaje_ibc=objeto.ibc
                     
                 
-                ibc = salario_base * 0.40
+                ibc = salario_base * (porcentaje_ibc/100)
+                if ibc<1300000:
+                    ibc=1300000
+                    
                 salud = ibc * 0.125
                 pension = ibc * 0.16
                 
