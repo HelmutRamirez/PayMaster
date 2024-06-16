@@ -50,6 +50,8 @@
                         <td><img src="{{ independi.imagen.url }}" alt="Imagen" width="50"></td>
                         <td><a href="{% url 'editarIndependiente' independi.numero_identificacion %}" class="btn btn-info">Editar datos</a></td>
                         <td><a href="{% url 'eliminaremple' independi.numero_identificacion %}" class="btn btn-danger">Eliminar</a></td>
+                        <td><a href="{% url 'calcularinde' independi.numero_identificacion %}" class="btn btn-primary">Calcular</a></td>
+                    
                     </tr>
                 </table>
 

@@ -14,4 +14,7 @@ urlpatterns = [
     path('editaIndepe/<int:numero_identificacion>/', views.editarIndependiente, name='editarIndependiente'),
     path('actualizaIndepe/<int:numero_identificacion>/', views.actualizarIndependiente, name='actualizarIndependiente'),
     path('eliminarIndepen/<int:numero_identificacion>/', views.eliminarEmpleado, name='eliminaremple'),
+    # path('calcularinde/', views.CalculosGenerales.calcular_aportes, name='calcularinde'),
+    path('calcularinde/<str:numero_identificacion>/', views.CalculosGenerales.calcular_aportes, name='calcularinde'),
+   
 ]

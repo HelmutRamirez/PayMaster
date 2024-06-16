@@ -1,59 +1,77 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-<link rel="stylesheet" type="text/css" href="{% static './css/cssTabla.css' %}">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Empleados</title>
-</head>
-<body>
-    <h1>Lista de Empleados</h1>
-    <table border="1">
-        <tr>
-            <th>Identificación</th>
-            <th>Primer Nombre</th>
-            <th>Segundo Nombre</th>
-            <th>Primer Apellido</th>
-            <th>Segundo Apellido</th>
-            <th>Estado</th>
-            <th>Tipo Documento</th>
-            <th>Correo</th>
-            <th>Celular</th>
-            <th>Genero</th>
-            <th>fecha Naci</th>
-            <th>Fecha Exp Docu</th>
-            <th>Empresa</th>
-            <th>calcularSalario</th>
-            <th>Imagen</th>
-            <th>Accion</th>
-        </tr>
-        {% for empleado in get_empleados %}
-        <tr>
-            <td>{{ empleado.numero_identificacion }}</td>
-            <td>{{ empleado.primer_nombre }}</td>
-            <td>{{ empleado.segundo_nombre }}</td>
-            <td>{{ empleado.primer_apellido }}</td>
-            <td>{{ empleado.segundo_apellido }}</td>
-            <td>{{ empleado.estado_civil }}</td>
-            <td>{{ empleado.tipo_documento }}</td>
-            <td>{{ empleado.correo }}</td>
-            <td>{{ empleado.celular }}</td>
-            <td>{{ empleado.genero }}</td>
-            <td>{{ empleado.fecha_nacimiento }}</td>
-            <td>{{ empleado.fecha_exp_documento }}</td>
-            <td>{{ empleado.empresa }}</td>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/cssTabla.css' %}" />
+  </head>
 
-            <td><img src="{{ empleado.imagen.url }}" alt="Imagen" width="50"> </td>
+  <body>
+    {% if request.session.estadoSesion %}
+      {% if request.session.permisos == 'Contador' or request.session.permisos == 'Auxiliar Contable' or request.session.permisos == 'RRHH' %}
+                {% if request.session.permisos == 'RRHH' %}     
+                  <a class="btn btn-warning" href="{% url 'registroEmpleado' %}">EDITAR</a>
+                  {% endif %}
 
-            <td><a class="btn btn-warning" href="{% url 'editarEmpleado' empleado.numero_identificacion %}">EDITAR</a></td>
-            <td><a class="btn btn-warning" href="{% url 'eliminaremple' empleado.numero_identificacion %}">Eliminar</a></td>
-          {% comment %} <td>
-                <form action="{% url 'calcularSalario' proyecto.numeroIdentificacion %}" method="get">
-                    <button type="submit">Calcular Salario P/S</button>
-                </form>
-            </td> {% endcomment %}
-        </tr>
-        {% endfor %}
-    </table>
-</body>
+        <h1>Lista de Empleados</h1>
+        <table border="1">
+          <thead>
+            <tr>
+              <th>Identificación</th>
+              <th>Primer Nombre</th>
+              <th>Segundo Nombre</th>
+              <th>Primer Apellido</th>
+              <th>Segundo Apellido</th>
+              <th>Estado Civil</th>
+              <th>Tipo Documento</th>
+              <th>Correo</th>
+              <th>Celular</th>
+              <th>Género</th>
+              <th>Fecha Nacimiento</th>
+              <th>Fecha Exp. Documento</th>
+              <th>Empresa</th>
+              <th>Imagen</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for empleado in get_empleados %}
+              <tr>
+                <td>{{ empleado.numero_identificacion }}</td>
+                <td>{{ empleado.primer_nombre }}</td>
+                <td>{{ empleado.segundo_nombre }}</td>
+                <td>{{ empleado.primer_apellido }}</td>
+                <td>{{ empleado.segundo_apellido }}</td>
+                <td>{{ empleado.estado_civil }}</td>
+                <td>{{ empleado.tipo_documento }}</td>
+                <td>{{ empleado.correo }}</td>
+                <td>{{ empleado.celular }}</td>
+                <td>{{ empleado.genero }}</td>
+                <td>{{ empleado.fecha_nacimiento }}</td>
+                <td>{{ empleado.fecha_exp_documento }}</td>
+                <td>{{ empleado.empresa }}</td>
+                <td>
+                  <img src="{{ empleado.imagen.url }}" alt="Imagen" width="50" />
+                </td>
+                <td>
+                    {% if request.session.permisos == 'RRHH' %}     
+                        <a class="btn btn-warning" href="{% url 'editarEmpleado' empleado.numero_identificacion %}">EDITAR</a>
+                        <a class="btn btn-warning" href="{% url 'eliminaremple' empleado.numero_identificacion %}">Eliminar</a>
+                    {% endif %}
+                    {% if request.session.permisos == 'Contador' or request.session.permisos == 'Auxiliar Contable' %}
+                        <a class="btn btn-warning" href="{% url 'calcularemple' empleado.numero_identificacion %}">Calcular</a>
+                    {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <h1>El usuario no tiene permisos suficientes</h1>
+      {% endif %}
+    {% else %}
+      <h1>El usuario no ha iniciado sesión</h1>
+    {% endif %}
+  </body>
 </html>

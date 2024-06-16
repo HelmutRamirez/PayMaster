@@ -1,8 +1,14 @@
 from django.db import models  # type: ignore
-
 from django.core.validators import MaxValueValidator,MinValueValidator
 from django.utils import timezone
-
+from django.db import models
+from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth.models import Permission
+from django.contrib.auth.hashers import check_password as django_check_password
+from django.core.validators import MaxValueValidator,MinValueValidator
+from django.utils import timezone
+from django.utils.timezone import timedelta
+# Create your models here.
 
 
 class Empresa(models.Model):
@@ -75,23 +81,48 @@ class Usuarios(models.Model):
 
     usuario = models.ForeignKey(Empleado, on_delete=models.CASCADE) 
     intentos = models.IntegerField(default=0)
-    estado_u = models.BooleanField(default=True)
+    estado_u = models.BooleanField(default=False)
     contrasena = models.CharField(max_length=128, null=True)
     id_rol= models.CharField(max_length=30,choices=id_rol) 
     
+    def set_password(self, raw_password):
+        self.contrasena = make_password(raw_password)
+        self.save()
 
+    def check_password(self, raw_password):
+        return django_check_password(raw_password, self.contrasena)
+    
+class PasswordResetRequest(models.Model):
+    usuario = models.ForeignKey(Empleado, on_delete=models.CASCADE)
+    token = models.CharField(max_length=255)
+    created_at = models.DateTimeField(default=timezone.now)
+    expires_at = models.DateTimeField(null=True)
+
+    used = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            # Es un nuevo objeto, establece la fecha de expiración
+            self.expires_at = self.created_at + timedelta(minutes=15)
+        super().save(*args, **kwargs)
 
     
-class Calculos(models.Model):
+class Calculos(models.Model):#los campos de esta clase son en dinero osea en flotantes
     documento = models.ForeignKey(Empleado, on_delete=models.CASCADE)
     salud=models.FloatField(blank=True, null=True)
     pension=models.FloatField(blank=True,null=True)
     arl=models.FloatField(blank=True,null=True)
+    transporte=models.FloatField(blank=True,null=True)
     salarioBase=models.FloatField(blank=True,null=True)
     cajaCompensacion=models.FloatField(blank=True,null=True)
+    sena=models.FloatField(blank=True,null=True)
+    icbf=models.FloatField(blank=True,null=True)
+    
     cesantias=models.FloatField(blank=True,null=True)
     interesCesantias=models.FloatField(blank=True,null=True)
     vacaciones=models.FloatField(blank=True,null=True)
+    dias_vacaciones=models.FloatField(blank=True,null=True)
+    
     
     
 class Novedades(models.Model):

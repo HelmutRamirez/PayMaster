@@ -37,7 +37,6 @@ class Independiente(models.Model):
     genero = models.CharField(max_length=10,choices=genero)
     fecha_nacimiento = models.DateField()
     fecha_exp_documento = models.DateField()
-    fecha_ingreso= models.DateField(blank=True, null=True)
     imagen=models.ImageField(upload_to='photos')
 
     def __str__(self):
@@ -83,9 +82,37 @@ class Calculos(models.Model):
     arl=models.FloatField(blank=True,null=True)
     salarioBase=models.FloatField(blank=True,null=True)
     cajaCompensacion=models.FloatField(blank=True,null=True)
-    cesantias=models.FloatField(blank=True,null=True)
-    interesCesantias=models.FloatField(blank=True,null=True)
-    vacaciones=models.FloatField(blank=True,null=True)
+    FSP=models.FloatField(blank=True,null=True)
+    
+class DatosCalculos(models.Model):
+    
+    arl=[
+        ('0', 'Ninguno'),
+        ('1', 'Nivel 1'),
+        ('2', 'Nivel 2'),
+        ('3', 'Nivel 3'),
+        ('4', 'Nivel 4'),
+        ('5', 'Nivel 5'), 
+    ]
+    CCF=[
+        ('Ninguna ', 'Ninguno'),
+        ('Si', 'Si'),
+    ]
+    salud=[
+        ('12,5', '12,5'),
+    ]
+    pension=[
+        ('16', '16'),
+    ]
+    documento = models.ForeignKey(Independiente, on_delete=models.CASCADE)
+    salarioBase=models.FloatField(blank=True,null=True)
+    ibc=models.FloatField(blank=True,null=True)
+    salud=models.FloatField(null=True, max_length=50, default=12.5)
+    pension=models.FloatField(null=True, max_length=50, default=16)
+    arl=models.CharField(blank=True,null=True, choices=arl, max_length=50)
+    CCF=models.CharField(blank=True,null=True, choices=CCF, max_length=50)
+    FSP=models.FloatField(blank=True,null=True)
+    
     
     
 class Novedades(models.Model):
