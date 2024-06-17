@@ -23,12 +23,13 @@
       
 
           <div class="menu">
-            {% if request.session.permisos == 'Contador' or request.session.permisos == 'Auxiliar Contable' %}
-              <a class="opccion" href="{% url 'registroEmpresa' %}">Registrar Empresa</a>
-            {% endif %}
+            
               <a class="opccion" href="{% url 'ListarEmpresa' %}" >Ver Empresas</a>
             {% if request.session.permisos == 'RRHH' %}     
               <a class="opccion" href="{% url 'registroEmpleado' %}">Registrar empleado</a>
+            {% endif %}
+            {% if request.session.permisos == 'Contador' or request.session.permisos == 'Auxiliar Contable' %}
+              <a class="opccion" href="{% url 'registroEmpresa' %}">Registrar Empresa</a>
             {% endif %}
             <form id="logout-form" method="POST" action="{% url 'cerrar_sesion_redirect_e' %}">
               {% csrf_token %}
@@ -38,9 +39,11 @@
         </div>
       {% else %}
         <h1>El usuario no tiene permisos</h1>
+        <a class="link" href="{% url 'loginEmpresa' %}">Iniciar sesión</a>
       {% endif %}
     {% else %}
       <h1>El usuario no ha iniciado sesión</h1>
+      <a class="link" href="{% url 'loginEmpresa' %}">Iniciar sesión</a>
     {% endif %}
 
   

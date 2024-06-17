@@ -18,7 +18,7 @@ urlpatterns = [
     path('eliminar/<int:nit>/', views.GestionarEmpresa.eliminarEmpresa, name='eliminarempre'),
 
     #Gestion de empleado
-    path('empleado', views.Paginas.homeEmpleado, name='homeEmpleado'),
+    path('empleado/<int:numero_identificacion>', views.Paginas.homeEmpleado, name='homeEmpleado'),
     path('registroEmpleado', views.GestionEmpleado.crearEmpleado, name='registroEmpleado'),
     path('listarEmpleados/<int:nit>', views.GestionEmpleado.ListarEmpleados, name='ListarEmpleados'), #redirecion para ver los empleados
     path('editarEmpleado/<int:numero_identificacion>/', views.GestionEmpleado.editarEmpleado, name='editarEmpleado'),
@@ -27,6 +27,7 @@ urlpatterns = [
     
     #Gestion de Calculos
     path('calcular/<int:numero_identificacion>/', views.CalculosGenerales.calcularSalario, name='calcularemple'),
-
-    
+    path('registro_novedades/<int:numero_identificacion>/', views.CalculosGenerales.registroNovedades, name='registroNovedades'),
+    path('calculos/<str:documento>/<str:fecha>/', views.CalculosGenerales.HistorialNomina, name='verNomina'),
+    path('todos_los_calculos<int:numero_identificacion>/', views.CalculosGenerales.obtener_todos_los_calculos, name='todos_los_calculos'),
 ]

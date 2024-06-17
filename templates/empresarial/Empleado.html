@@ -32,8 +32,9 @@
                         <td>{{ independi.celular }}</td>
                         <td><img src="{{ independi.imagen.url }}" alt="Imagen" width="50"></td>
                         <td>
-                            <a class="a" href="{% url 'editarIndependiente' independi.numero_identificacion %}">Editar datos</a>
-                            <a class="a" href="{% url 'eliminaremple' independi.numero_identificacion %}">Eliminar</a>
+                            <a class="a" href="{% url 'editarEmpleado' independi.numero_identificacion %}">Editar datos</a>
+                            <a class="a" href="{% url 'todos_los_calculos' independi.numero_identificacion %}">Ver nomina</a>
+                        
                         </td>
                     </tr>
                 </table>
@@ -52,7 +53,9 @@
             <h1>El usuario no tiene permisos</h1>
         {% endif %}
     {% else %}
+   
         <h1>El usuario no ha iniciado sesión</h1>
+        <a class="link" href="{% url 'loginEmpresa' %}">Iniciar sesión</a>
     {% endif %}
 
     <script>
