@@ -4,60 +4,46 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Permisos del Usuario</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/cssTabla.css' %}">
+    <link rel="stylesheet" href="{% static 'css/tablas.css' %}">
+    <link rel="shortcut icon" href="{% static 'image/logo2.png' %}" type="image/x-icon">
+    <title>Permisos del Usuario</title>
+   
 </head>
 <body>
+    <div class="contenedor">
     {% if request.session.estadoSesion %}
         {% if request.session.permisos == 'Empleado General' %}
-
             {% if independi %}
                 <h1>Bienvenido {{ independi.primer_nombre }}</h1>
                 
-                <table border="1">
+                <table>
                     <tr>
                         <th>Identificación</th>
-                        <th>Primer Nombre</th>
-                        <th>Segundo Nombre</th>
-                        <th>Primer Apellido</th>
-                        <th>Segundo Apellido</th>
-                        <th>Estado</th>
-                        <th>Tipo Documento</th>
-                        <th>Correo</th>
+                        <th>Nombre</th>
                         <th>Celular</th>
-                        <th>Género</th>
-                        <th>Fecha Nacimiento</th>
-                        <th>Fecha Exp Documento</th>
                         <th>Imagen</th>
-                        <th colspan='2'>Acción</th>
+                        <th>Acción</th>
                     </tr>
                     <tr>
                         <td>{{ independi.numero_identificacion }}</td>
-                        <td>{{ independi.primer_nombre }}</td>
-                        <td>{{ independi.segundo_nombre }}</td>
-                        <td>{{ independi.primer_apellido }}</td>
-                        <td>{{ independi.segundo_apellido }}</td>
-                        <td>{{ independi.estado_civil }}</td>
-                        <td>{{ independi.tipo_documento }}</td>
-                        <td>{{ independi.correo }}</td>
+                        <td>{{ independi.primer_nombre }} {{ independi.primer_apellido }}</td>
                         <td>{{ independi.celular }}</td>
-                        <td>{{ independi.get_genero_display }}</td>
-                        <td>{{ independi.fecha_nacimiento }}</td>
-                        <td>{{ independi.fecha_exp_documento }}</td>
                         <td><img src="{{ independi.imagen.url }}" alt="Imagen" width="50"></td>
-                        <td><a href="{% url 'editarIndependiente' independi.numero_identificacion %}" class="btn btn-info">Editar datos</a></td>
-                        <td><a href="{% url 'eliminaremple' independi.numero_identificacion %}" class="btn btn-danger">Eliminar</a></td>
+                        <td>
+                            <a class="a" href="{% url 'editarIndependiente' independi.numero_identificacion %}">Editar datos</a>
+                            <a class="a" href="{% url 'eliminaremple' independi.numero_identificacion %}">Eliminar</a>
+                        </td>
                     </tr>
                 </table>
 
                 <form id="logout-form" method="POST" action="{% url 'cerrar_sesion_redirect_e' %}">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-danger">Cerrar Sesión</button>
+                    <button class="link cerrar" type="submit">Cerrar Sesión</button>
                 </form>
-                
+            </div>
+
             {% else %}
                 <h1>El usuario {{ request.session.user }} no tiene perfil creado</h1>
             {% endif %}

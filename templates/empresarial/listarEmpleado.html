@@ -1,35 +1,26 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Empleados</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'css/cssTabla.css' %}" />
-  </head>
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="{% static 'css/tablas.css' %}">
+  <link rel="shortcut icon" href="{% static 'image/logo2.png' %}" type="image/x-icon">
+  <title>Empleados</title>
+  
+</head>
 
-  <body>
+<body>
+  <div class="contenedor">
+
     {% if request.session.estadoSesion %}
-      {% if request.session.permisos == 'Contador' or request.session.permisos == 'Auxiliar Contable' or request.session.permisos == 'RRHH' %}
-                {% if request.session.permisos == 'RRHH' %}     
-                  <a class="btn btn-warning" href="{% url 'registroEmpleado' %}">EDITAR</a>
-                  {% endif %}
-
+      {% if request.session.permisos == 'Contador' or request.session.permisos == 'Auxiliar Contable' or request.session.permisos == 'RRHH' %}  
         <h1>Lista de Empleados</h1>
-        <table border="1">
+        <table>
           <thead>
             <tr>
               <th>Identificación</th>
-              <th>Primer Nombre</th>
-              <th>Segundo Nombre</th>
-              <th>Primer Apellido</th>
-              <th>Segundo Apellido</th>
-              <th>Estado Civil</th>
-              <th>Tipo Documento</th>
-              <th>Correo</th>
+              <th>Nombre</th>
               <th>Celular</th>
-              <th>Género</th>
-              <th>Fecha Nacimiento</th>
-              <th>Fecha Exp. Documento</th>
               <th>Empresa</th>
               <th>Imagen</th>
               <th>Acciones</th>
@@ -39,39 +30,34 @@
             {% for empleado in get_empleados %}
               <tr>
                 <td>{{ empleado.numero_identificacion }}</td>
-                <td>{{ empleado.primer_nombre }}</td>
-                <td>{{ empleado.segundo_nombre }}</td>
-                <td>{{ empleado.primer_apellido }}</td>
-                <td>{{ empleado.segundo_apellido }}</td>
-                <td>{{ empleado.estado_civil }}</td>
-                <td>{{ empleado.tipo_documento }}</td>
+                <td>{{ empleado.primer_nombre }} {{ empleado.primer_apellido }}</td>
                 <td>{{ empleado.correo }}</td>
-                <td>{{ empleado.celular }}</td>
-                <td>{{ empleado.genero }}</td>
-                <td>{{ empleado.fecha_nacimiento }}</td>
-                <td>{{ empleado.fecha_exp_documento }}</td>
                 <td>{{ empleado.empresa }}</td>
                 <td>
                   <img src="{{ empleado.imagen.url }}" alt="Imagen" width="50" />
                 </td>
                 <td>
                     {% if request.session.permisos == 'RRHH' %}     
-                        <a class="btn btn-warning" href="{% url 'editarEmpleado' empleado.numero_identificacion %}">EDITAR</a>
-                        <a class="btn btn-warning" href="{% url 'eliminaremple' empleado.numero_identificacion %}">Eliminar</a>
+                        <a class="a" href="{% url 'editarEmpleado' empleado.numero_identificacion %}">EDITAR</a>
+                        <a class="a" href="{% url 'eliminaremple' empleado.numero_identificacion %}">Eliminar</a>
                     {% endif %}
                     {% if request.session.permisos == 'Contador' or request.session.permisos == 'Auxiliar Contable' %}
-                        <a class="btn btn-warning" href="{% url 'calcularemple' empleado.numero_identificacion %}">Calcular</a>
+                        <a class="a" href="{% url 'calcularemple' empleado.numero_identificacion %}">Calcular</a>
                     {% endif %}
                 </td>
               </tr>
             {% endfor %}
           </tbody>
         </table>
-      {% else %}
-        <h1>El usuario no tiene permisos suficientes</h1>
-      {% endif %}
-    {% else %}
-      <h1>El usuario no ha iniciado sesión</h1>
-    {% endif %}
-  </body>
+        <div class="volverB">
+          <a class="link" href="{% url 'homeEmpresa' %}">Volver</a>
+        </div>
+  </div>
+  {% else %}
+    <h1>El usuario no tiene permisos suficientes</h1>
+  {% endif %}
+  {% else %}
+    <h1>El usuario no ha iniciado sesión</h1>
+  {% endif %}
+</body>
 </html>

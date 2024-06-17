@@ -4,40 +4,42 @@
 <head>
     <meta charset="UTF-8">
     <title>Resultado de Cálculo</title>
-    <link rel="stylesheet" type="text/css" href="{% static './css/cssTabla.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static './css/tablas.css' %}">
 </head>
 <body>
-    <h1>Resultado de Cálculo</h1>
-    <table border="1">
-        <tr>
-            <th>Documento</th>
-            <th>Salud</th>
-            <th>Pensión</th>
-            <th>ARL</th>
-            <th>Transporte</th>
-            <th>SENA</th>
-            <th>ICBF</th>
-            <th>Caja de Compensación</th>
-            <th>Cesantías</th>
-            <th>Intereses de Cesantías</th>
-            <th>Vacaciones</th>
-            <th>Días de Vacaciones</th>
-        </tr>
-        <tr>
-            <td>{{ empleado }}</td>
-            <td>{{ salud }}</td>
-            <td>{{ pension }}</td>
-            <td>{{ arl }}</td>
-            <td>{{ transporte }}</td>
-            <td>{{ sena }}</td>
-            <td>{{ ICBF }}</td>
-            <td>{{ CajaCompensa }}</td>
-            <td>{{ cesantias }}</td>
-            <td>{{ intereses_cesantias }}</td>
-            <td>{{ valor_vacaciones }}</td>
-            <td>{{ dias_vacaciones }}</td>
-        </tr>
-    </table>
+    <div class="contenedor">
+        <h1>Resultado de Cálculo</h1>
+        <table>
+            <tr>
+                <th>Documento</th>
+                <th>Salud</th>
+                <th>Pensión</th>
+                <th>ARL</th>
+                <th>Transporte</th>
+                <th>SENA</th>
+                <th>ICBF</th>
+                <th>Caja de Compensación</th>
+                <th>Cesantías</th>
+                <th>Intereses de Cesantías</th>
+                <th>Vacaciones</th>
+                <th>Días de Vacaciones</th>
+            </tr>
+            <tr>
+                <td>{{ empleado }}</td>
+                <td>{{ salud }}</td>
+                <td>{{ pension }}</td>
+                <td>{{ arl }}</td>
+                <td>{{ transporte }}</td>
+                <td>{{ sena }}</td>
+                <td>{{ ICBF }}</td>
+                <td>{{ CajaCompensa }}</td>
+                <td>{{ cesantias }}</td>
+                <td>{{ intereses_cesantias }}</td>
+                <td>{{ valor_vacaciones }}</td>
+                <td>{{ dias_vacaciones }}</td>
+            </tr>
+        </table>
+    </div>
     <a href="{% url 'ListarEmpleados' %}">Volver a la lista de empleados</a>
 </body>
 </html>

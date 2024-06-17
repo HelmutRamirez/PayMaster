@@ -47,7 +47,7 @@ class Empleado(models.Model):
         ('5', 'Nivel 5'), 
     ]
 
-    numero_identificacion = models.CharField(primary_key=True, max_length=20)
+    numero_identificacion = models.IntegerField(primary_key=True)
     primer_nombre = models.CharField(max_length=30)
     segundo_nombre = models.CharField(max_length=30, blank=True, null=True)
     primer_apellido = models.CharField(max_length=30)
