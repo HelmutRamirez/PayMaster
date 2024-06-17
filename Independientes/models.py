@@ -105,10 +105,10 @@ class DatosCalculos(models.Model):
         ('16', '16'),
     ]
     documento = models.ForeignKey(Independiente, on_delete=models.CASCADE)
-    salarioBase=models.FloatField(blank=True,null=True)
-    ibc=models.FloatField(blank=True,null=True)
-    salud=models.FloatField(null=True, max_length=50, default=12.5)
-    pension=models.FloatField(null=True, max_length=50, default=16)
+    salarioBase=models.FloatField(null=True, blank=True)
+    ibc=models.FloatField(validators=[MaxValueValidator(100),MinValueValidator(40)],null=True)
+    salud=models.FloatField( max_length=50, default=12.5)
+    pension=models.FloatField(max_length=50, default=16)
     arl=models.CharField(blank=True,null=True, choices=arl, max_length=50)
     CCF=models.CharField(blank=True,null=True, choices=CCF, max_length=50)
     FSP=models.FloatField(blank=True,null=True)
