@@ -1,10 +1,10 @@
-from django.db import models
-from django.contrib.auth.hashers import make_password, check_password
-from django.contrib.auth.models import Permission
-from django.contrib.auth.hashers import check_password as django_check_password
-from django.core.validators import MaxValueValidator,MinValueValidator
-from django.utils import timezone
-from django.utils.timezone import timedelta
+from django.db import models  # type: ignore
+from django.contrib.auth.hashers import make_password, check_password  # type: ignore
+from django.contrib.auth.models import Permission  # type: ignore
+from django.contrib.auth.hashers import check_password as django_check_password  # type: ignore
+from django.core.validators import MaxValueValidator,MinValueValidator  # type: ignore
+from django.utils import timezone  # type: ignore
+from django.utils.timezone import timedelta  # type: ignore
 # Create your models here.
 class Independiente(models.Model):
     estado_civil=[
@@ -25,7 +25,7 @@ class Independiente(models.Model):
         ('P', 'Prefiero no decir'),
     ]
 
-    numero_identificacion = models.CharField(primary_key=True, max_length=20)
+    numero_identificacion = models.IntegerField(primary_key=True)
     primer_nombre = models.CharField(max_length=30)
     segundo_nombre = models.CharField(max_length=30, blank=True, null=True)
     primer_apellido = models.CharField(max_length=30)

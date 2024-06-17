@@ -1,43 +1,46 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/login_in.css' %}">
+    <link rel="shortcut icon" href="{% static 'image/logo2.png' %}" type="image/x-icon">
     <title>Iniciar sesión</title>
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
-        crossorigin="anonymous"
-      />
-    <link rel="stylesheet" type="text/css" href="{% static 'css/formulario.css' %}">
 </head>
 <body>
-    <div class="container mt-5">
-        <h2>Iniciar sesión</h2>
-        {% if messages %}
-            <div class="alert alert-danger">
-                {% for message in messages %}
-                    <p>{{ message }}</p>
-                {% endfor %}
-            </div>
-        {% endif %}
-        <form method="post">
-            {% csrf_token %}
-            <div class="mb-3">
+    <div class="contenedeor">
+        <div class="logo">
+            <img src="{% static 'image/logo2.png' %}" alt="PayMaster">
+            <p>PayMaster</p>
+        </div>
+        <div class="volverB">
+            <a class="link volver" href="{% url 'menu' %}">Volver</a>
+        </div>
+        <div class="login">
+            <p id="titulo">Iniciar sesión</p>
+            {% if messages %}
+                <div>
+                    {% for message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <form class="formulario" method="post">
+                {% csrf_token %}
                 <label for="id_numero_identificacion" class="form-label">Número de identificación:</label>
-                <input type="text" class="form-control" id="id_numero_identificacion" name="numero_identificacion" required>
-            </div>
-            <div class="mb-3">
+                <input type="number" class="form-control" id="id_numero_identificacion" name="numero_identificacion" required>
+
                 <label for="id_contrasena" class="form-label">Contraseña:</label>
                 <input type="password" class="form-control" id="id_contrasena" name="contrasena" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Iniciar sesión</button>
-        </form>
-        <a href="{% url 'registrarIndependiente' %}" class="btn btn-info mt-3">Registrarse</a>
-        <a href="{% url 'recuperar_contrasena' %}" class="btn btn-info mt-3">Recuperar contraseña</a>
+                <div class="button">
+                    <button class="boton" type="submit" class="btn btn-primary">Iniciar sesión</button>
+                </div>
+            </form>
+
+            <a class="link" href="{% url 'registrarIndependiente' %}">Registrarse</a>
+            <a class="link" href="{% url 'recuperar_contrasena' %}">Recuperar contraseña</a>
+        </div>
     </div>
 </body>
 </html>
