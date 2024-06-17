@@ -2,7 +2,7 @@
 
 :root {
     --colorPrimario: #4A90E2;    /* Azul Primario */
-    --colorSecundario: #50E3C2;  /* Verde Secundario */
+    --colorSecundario: #dc3545;  /* Rojo Tango */
     --colorAcento: #F5A623;      /* Naranja de Acento */
     --colorFondo: #F4F4F4;       /* Gris Claro de Fondo */
     --colorTexto: #333333;       /* Negro Suave para Texto */
@@ -52,6 +52,7 @@ body{
     background-color: #4A90E2;
     padding: 10px;
     border-radius: 5px;
+    transition: background-color 0.3s ease;
     box-shadow: 0 10px 30px 0 rgba(0, 0, 0, 0.1);
 }
 /*------------------------*/
@@ -121,6 +122,7 @@ body{
 .boton:hover {
     color: white;
     background-color: var(--colorAcento);
+    transition: background-color 0.3s ease;
     cursor: pointer;
     transform: scale(1.1); 
 }

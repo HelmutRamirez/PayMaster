@@ -1,10 +1,10 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-  <link rel="stylesheet" type="text/css" href="{% static './css/cssTabla.css' %}" />
+  <head>
   <script src="{% static 'js/session_monitor.js' %}"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
+  <script>
         var idleTime = 0;
 
         function timerIncrement() {
@@ -16,7 +16,7 @@
 
         $(document).ready(function () {
             // Increment the idle time counter every minute.
-            var idleInterval = setInterval(timerIncrement, 10000); // 1 minuto
+            var idleInterval = setInterval(timerIncrement, 100000); // 1 minuto
 
             // Reset the idle timer on mouse movement or key press.
             $(this).mousemove(function (e) {
@@ -53,19 +53,21 @@
             }).catch(error => {
                 console.error('Error al cerrar sesión:', error);
                 // Opcional: Manejar errores si es necesario
-            });
+              });
         });
-    </script>
-  <head>
-    <meta charset="UTF-8" />
-    <title>Empresas</title>
-  </head>
-  <body>
+  </script>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="{% static 'css/tablas.css' %}">
+  <link rel="shortcut icon" href="{% static 'image/logo2.png' %}" type="image/x-icon">
+    
+  <title>Empresas</title>
+</head>
+<body>
+  <div class="contenedor">
     {% if request.session.estadoSesion %}
       {% if request.session.permisos == 'Contador' or request.session.permisos == 'Auxiliar Contable' or request.session.permisos == 'RRHH' %}
-        <h1>Bienvenido {{ independi.primer_nombre }}</h1>
-        <h1>Lista de Empresas</h1>
-        <table border="1">
+        <p class="titulo">Lista de Empresas</p>
+        <table>
           <tr>
             <th>Nit</th>
             <th>Razon Social</th>
@@ -85,21 +87,28 @@
                 <img src="{{ empresa.imagen.url }}" alt="Imagen" width="50" />
               </td>
               {% if request.session.permisos == 'Contador' or request.session.permisos == 'Auxiliar Contable' %}
-              <td><a class="btn btn-warning" href="{% url 'editarEmpresa' empresa.nit %}">EDITAR</a>
-              <a class="btn btn-warning" href="{% url 'eliminarempre' empresa.nit %}">Eliminar</a>
-              <a class="btn btn-warning" href="{% url 'ListarEmpleados' empresa.nit %}">Nomina Personal</a>
+              <td>
+                <a class="a" href="{% url 'editarEmpresa' empresa.nit %}">Editar</a>
+                <a class="a href="{% url 'eliminarempre' empresa.nit %}">Eliminar</a>
+                <a class="a" href="{% url 'ListarEmpleados' empresa.nit %}">Nomina Personal</a>
               {% endif %}
+            </td>
+            <td>
               {% if request.session.permisos == 'RRHH' %}
-              <a class="btn btn-warning" href="{% url 'ListarEmpleados' empresa.nit %}">Gestionar Personal</a></td> </tr>
+                <a class="a" href="{% url 'ListarEmpleados' empresa.nit %}">Gestionar Personal</a></td> </tr>
               {% endif %}
             {% endfor %}
+            </td>
         </table>
-      {% else %}
-        <h1>El usuario no tiene permisos</h1>
-      {% endif %}
-    {% else %}
-      <h1>El usuario no ha iniciado sesión</h1>
-    {% endif %}
-  </body>
-  
+        <div class="volverB">
+          <a class="link" href="{% url 'homeEmpresa' %}">Volver</a>
+        </div>
+  </div>
+  {% else %}
+    <h1>El usuario no tiene permisos</h1>
+  {% endif %}
+  {% else %}
+    <h1>El usuario no ha iniciado sesión</h1>
+  {% endif %}
+</body>  
 </html>

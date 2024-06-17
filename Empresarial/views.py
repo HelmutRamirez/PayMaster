@@ -203,9 +203,7 @@ class GestionEmpleado(HttpRequest):
         formulario = EmpleadoForm(request.POST, request.FILES)
         if formulario.is_valid():
             formula=formulario.save()
-            name = formula.primer_nombre
-            docu= formula.numero_identificacion
-            raw_password=docu+name
+            raw_password=formula.primer_nombre
             usuario = Usuarios(
                 usuario=formula,
                 intentos=0,
