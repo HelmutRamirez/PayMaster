@@ -11,6 +11,11 @@ class EmpleadoForm(forms.ModelForm):
     class Meta:
         model = Empleado
         fields ='__all__'
+
+        widgets={'fecha_nacimiento': forms.DateInput(attrs={'type':'date'}),
+                 'fecha_exp_documento': forms.DateInput(attrs={'type':'date'}),
+                 'fecha_ingreso': forms.DateInput(attrs={'type':'date'})
+                }
         
         
         # ['numero_identificacion', 'primer_nombre', 'segundo_nombre', 'primer_apellido', 'segundo_apellido', 'estado_civil']

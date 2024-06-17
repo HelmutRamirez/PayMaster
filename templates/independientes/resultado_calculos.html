@@ -1,11 +1,14 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <link rel="shortcut icon" href="{% static 'image/logo2.png' %}" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/tablas.css' %}">
     <title>Resultados de Cálculos</title>
 </head>
 <body>
-    <div class="container mt-5">
+    <div class="contenedor">
         <h2>Resultados de Cálculos para {{ independiente.primer_nombre }} {{ independiente.primer_apellido }}</h2>
         
         <table class="table">
@@ -21,7 +24,7 @@
                     <td>{{ salario_base }}</td>
                 </tr>
                 <tr>
-                    <td>IBC</td>
+                    <td>Ingreso Base Cotización</td>
                     <td>{{ ibc }}</td>
                 </tr>
                 <tr>
@@ -33,21 +36,21 @@
                     <td>{{ pension }}</td>
                 </tr>
                 <tr>
-                    <td>ARL</td>
+                    <td>Aseguradora de Riesgos Laborales</td>
                     <td>{{ arl }}</td>
                 </tr>
                 <tr>
-                    <td>CCF</td>
+                    <td>Caja de Compensación Familiar</td>
                     <td>{{ ccf }}</td>
                 </tr>
                 {% comment %} <tr>
-                    <td>FSP</td>
+                    <td>Fondo Solidario de Pensión</td>
                     <td>{{ fsp }}</td>
                 </tr> {% endcomment %}
             </tbody>
         </table>
         
-        <a href="{% url 'homeIndependiente' %}" class="btn btn-primary">Volver</a>
+        <a class="link" href="{% url 'homeIndependiente' %}">Volver</a>
     </div>
 </body>
 </html>
