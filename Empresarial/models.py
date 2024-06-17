@@ -55,18 +55,18 @@ class Empleado(models.Model):
     estado_civil = models.CharField(max_length=20, choices=estado_civil)
     tipo_documento = models.CharField(max_length=50, choices=tipo_documento)
     correo = models.EmailField(unique=True)
-    celular = models.CharField(max_length=15)
+    celular = models.CharField(max_length=10)
     genero = models.CharField(max_length=10,choices=genero)
     fecha_nacimiento = models.DateField()
     fecha_exp_documento = models.DateField()
-    fecha_ingreso = models.DateField( blank=True,null=True)
-    nivel_riesgo=models.CharField(max_length=10, choices=nivel_riesgo,blank=True, null=True)
-    salario=models.FloatField(blank=True,null=True)
+    fecha_ingreso = models.DateField(null=True)
+    nivel_riesgo=models.CharField(max_length=10, choices=nivel_riesgo,null=True)
+    salario=models.FloatField(validators=[MinValueValidator(1300000)],null=True)
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE,blank=True, null=True) 
     imagen=models.ImageField(upload_to='photos')
 
     def __str__(self):
-        return self.primer_nombre
+        return f'{self.primer_nombre} {self.primer_apellido} - {self.numero_identificacion}'
 
 
 
@@ -81,7 +81,7 @@ class Usuarios(models.Model):
     usuario = models.ForeignKey(Empleado, on_delete=models.CASCADE) 
     intentos = models.IntegerField(default=0)
     estado_u = models.BooleanField(default=False)
-    contrasena = models.CharField(max_length=128, null=True)
+    contrasena = models.CharField(max_length=88,null=True)
     id_rol= models.CharField(max_length=30,choices=id_rol) 
     
     def set_password(self, raw_password):
@@ -106,26 +106,37 @@ class PasswordResetRequest(models.Model):
         super().save(*args, **kwargs)
 
     
-class Calculos(models.Model):#los campos de esta clase son en dinero osea en flotantes
-    documento = models.ForeignKey(Empleado, on_delete=models.CASCADE)
-    salud=models.FloatField(blank=True, null=True)
-    pension=models.FloatField(blank=True,null=True)
-    arl=models.FloatField(blank=True,null=True)
-    transporte=models.FloatField(blank=True,null=True)
-    salarioBase=models.FloatField(blank=True,null=True)
-    cajaCompensacion=models.FloatField(blank=True,null=True)
-    sena=models.FloatField(blank=True,null=True)
-    icbf=models.FloatField(blank=True,null=True)
-    
-    cesantias=models.FloatField(blank=True,null=True)
-    interesCesantias=models.FloatField(blank=True,null=True)
-    vacaciones=models.FloatField(blank=True,null=True)
-    dias_vacaciones=models.FloatField(blank=True,null=True)
+class Calculos(models.Model):
+    documento = models.ForeignKey('Empleado', on_delete=models.CASCADE)
+    salud = models.FloatField(validators=[MinValueValidator(0.0)],null=True)
+    pension = models.FloatField(validators=[MinValueValidator(0.0)],null=True)
+    arl = models.FloatField(validators=[MinValueValidator(0.0)],null=True)
+    transporte = models.FloatField(validators=[MinValueValidator(0.0)],null=True)
+    salarioBase = models.FloatField(validators=[MinValueValidator(0.0)],null=True)
+    cajaCompensacion = models.FloatField(validators=[MinValueValidator(0.0)],null=True)
+    sena = models.FloatField(null=True, validators=[MinValueValidator(0.0)], default=0.0)
+    icbf = models.FloatField(null=True, validators=[MinValueValidator(0.0)], default=0.0)
+    fecha_calculos = models.DateField(null=True)
+    cesantias = models.FloatField(validators=[MinValueValidator(0.0)],null=True)
+    interesCesantias = models.FloatField(validators=[MinValueValidator(0.0)],null=True)
+    vacaciones = models.FloatField(validators=[MinValueValidator(0.0)],null=True)
+    dias_vacaciones = models.FloatField(validators=[MinValueValidator(0.0)],null=True)
+    HorasExDiu=models.IntegerField(blank=True,null=True)
+    HorasExNoc=models.IntegerField(blank=True,null=True)
+    HorasExFestivaDiu=models.IntegerField(blank=True,null=True)
+    HorasExFestivaNoc=models.IntegerField(blank=True,null=True)
+    recargoDiuFes=models.IntegerField(blank=True,null=True)
+    recargoNoc=models.IntegerField(blank=True,null=True)
+    recargoNocFest=models.IntegerField(blank=True,null=True)
+
+    def __str__(self):
+        return f'{self.documento} - {self.fecha_calculos}'
     
     
     
 class Novedades(models.Model):
     empleado = models.ForeignKey(Empleado, on_delete=models.CASCADE)
+    fecha_novedad=models.DateField(null=True,)
     HorasExDiu=models.IntegerField(validators=[MaxValueValidator(48),MinValueValidator(0)],blank=True,null=True)
     HorasExNoc=models.IntegerField(validators=[MaxValueValidator(48),MinValueValidator(0)],blank=True,null=True)
     HorasExFestivaDiu=models.IntegerField(validators=[MaxValueValidator(48),MinValueValidator(0)],blank=True,null=True)
