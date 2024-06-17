@@ -1,10 +1,10 @@
-from django.db import models
-from django.contrib.auth.hashers import make_password, check_password
-from django.contrib.auth.models import Permission
-from django.contrib.auth.hashers import check_password as django_check_password
-from django.core.validators import MaxValueValidator,MinValueValidator
-from django.utils import timezone
-from django.utils.timezone import timedelta
+from django.db import models  # type: ignore
+from django.contrib.auth.hashers import make_password, check_password  # type: ignore
+from django.contrib.auth.models import Permission  # type: ignore
+from django.contrib.auth.hashers import check_password as django_check_password  # type: ignore
+from django.core.validators import MaxValueValidator,MinValueValidator  # type: ignore
+from django.utils import timezone  # type: ignore
+from django.utils.timezone import timedelta  # type: ignore
 # Create your models here.
 class Independiente(models.Model):
     estado_civil=[
@@ -25,7 +25,7 @@ class Independiente(models.Model):
         ('P', 'Prefiero no decir'),
     ]
 
-    numero_identificacion = models.CharField(primary_key=True, max_length=20)
+    numero_identificacion = models.IntegerField(primary_key=True)
     primer_nombre = models.CharField(max_length=30)
     segundo_nombre = models.CharField(max_length=30, blank=True, null=True)
     primer_apellido = models.CharField(max_length=30)
@@ -37,7 +37,6 @@ class Independiente(models.Model):
     genero = models.CharField(max_length=10,choices=genero)
     fecha_nacimiento = models.DateField()
     fecha_exp_documento = models.DateField()
-    fecha_ingreso= models.DateField(blank=True, null=True)
     imagen=models.ImageField(upload_to='photos')
 
     def __str__(self):
@@ -83,9 +82,37 @@ class Calculos(models.Model):
     arl=models.FloatField(blank=True,null=True)
     salarioBase=models.FloatField(blank=True,null=True)
     cajaCompensacion=models.FloatField(blank=True,null=True)
-    cesantias=models.FloatField(blank=True,null=True)
-    interesCesantias=models.FloatField(blank=True,null=True)
-    vacaciones=models.FloatField(blank=True,null=True)
+    FSP=models.FloatField(blank=True,null=True)
+    
+class DatosCalculos(models.Model):
+    
+    arl=[
+        ('0', 'Ninguno'),
+        ('1', 'Nivel 1'),
+        ('2', 'Nivel 2'),
+        ('3', 'Nivel 3'),
+        ('4', 'Nivel 4'),
+        ('5', 'Nivel 5'), 
+    ]
+    CCF=[
+        ('Ninguna ', 'Ninguno'),
+        ('Si', 'Si'),
+    ]
+    salud=[
+        ('12,5', '12,5'),
+    ]
+    pension=[
+        ('16', '16'),
+    ]
+    documento = models.ForeignKey(Independiente, on_delete=models.CASCADE)
+    salarioBase=models.FloatField(null=True, blank=True)
+    ibc=models.FloatField(validators=[MaxValueValidator(100),MinValueValidator(40)],null=True)
+    salud=models.FloatField( max_length=50, default=12.5)
+    pension=models.FloatField(max_length=50, default=16)
+    arl=models.CharField(blank=True,null=True, choices=arl, max_length=50)
+    CCF=models.CharField(blank=True,null=True, choices=CCF, max_length=50)
+    FSP=models.FloatField(blank=True,null=True)
+    
     
     
 class Novedades(models.Model):

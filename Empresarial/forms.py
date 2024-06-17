@@ -22,16 +22,16 @@ class EmpleadoForm(forms.ModelForm):
     #         if filtro in readonly_fields:
     #             self.fields[filtro].widget.attrs['readonly'] = True
 
-class UsuariosForm(forms.ModelForm):
-    class Meta:
-        model = Usuarios
-        fields = '__all__'
-class CalculosForm(forms.ModelForm):
-    class Meta:
-        model = Calculos
-        fields = ['documento', 'salarioBase']
+class LoginForm(forms.Form):
+    numero_identificacion = forms.IntegerField(label='Número de identificación')
+    contrasena = forms.CharField(label='Contraseña', widget=forms.PasswordInput)
 
-class NovedadesForm(forms.ModelForm):
-    class Meta:
-        model = Novedades
-        fields = '__all__'
+
+class RecuperarContrasenaForm(forms.Form):
+    numero_identificacion = forms.IntegerField(label='Número de Identificación')
+
+
+class PasswordResetForm(forms.Form):
+    token = forms.CharField(label='Token', max_length=255)
+    new_password = forms.CharField(label='Nueva Contraseña', widget=forms.PasswordInput)
+    confirm_password = forms.CharField(label='Confirmar Contraseña', widget=forms.PasswordInput)
