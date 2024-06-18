@@ -193,8 +193,8 @@ def actualizarIndependiente(request, numero_identificacion):
     formulario = IndependienteForm(request.POST, instance=independiente)
     if formulario.is_valid():
         formulario.save()
-    independiente = Independiente.objects.get(pk=numero_identificacion)
-    return render(request, 'independientes/home.html', {"get_empleados": independiente})
+        independiente = Independiente.objects.get(pk=numero_identificacion)
+    return render(request, 'independientes/home.html', {"independi": independiente})
 
 
 def eliminarEmpleado(request, numero_identificacion):

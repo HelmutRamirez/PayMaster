@@ -24,6 +24,14 @@ class Independiente(models.Model):
         ('O', 'Otro'),
         ('P', 'Prefiero no decir'),
     ]
+    ccf=[
+        ('Ninguna','Ninguna'),
+        ('Compensar', 'Compensar'),
+        ('Colsubcidio', 'Colsubcidio'),
+        ('Cafam', 'Cafam'),
+        ('Cofrem', 'Cofrem'),
+        ('Comfacesar', 'Comfacesar'),
+    ]
 
     numero_identificacion = models.IntegerField(primary_key=True)
     primer_nombre = models.CharField(max_length=30)
@@ -35,8 +43,10 @@ class Independiente(models.Model):
     correo = models.EmailField(unique=True)
     celular = models.CharField(max_length=15)
     genero = models.CharField(max_length=10,choices=genero)
+    salario=models.FloatField(validators=[MinValueValidator(1300000)],null=True)
     fecha_nacimiento = models.DateField()
     fecha_exp_documento = models.DateField()
+    ccf= models.CharField(max_length=50, choices=ccf, default='Ninguna')
     imagen=models.ImageField(upload_to='photos')
 
     def __str__(self):
@@ -82,7 +92,7 @@ class Calculos(models.Model):
     arl=models.FloatField(blank=True,null=True)
     salarioBase=models.FloatField(blank=True,null=True)
     cajaCompensacion=models.FloatField(blank=True,null=True)
-    FSP=models.FloatField(blank=True,null=True)
+    fsp=models.FloatField(blank=True,null=True)
     
 class DatosCalculos(models.Model):
     
@@ -94,24 +104,23 @@ class DatosCalculos(models.Model):
         ('4', 'Nivel 4'),
         ('5', 'Nivel 5'), 
     ]
-    CCF=[
-        ('Ninguna ', 'Ninguno'),
-        ('Si', 'Si'),
+    ccf=[
+        ('Ninguna','Ninguna'),
+        ('Compensar', 'Compensar'),
+        ('Colsubcidio', 'Colsubcidio'),
+        ('Cafam', 'Cafam'),
+        ('Cofrem', 'Cofrem'),
+        ('Comfacesar', 'Comfacesar'),
     ]
-    salud=[
-        ('12,5', '12,5'),
-    ]
-    pension=[
-        ('16', '16'),
-    ]
+    
     documento = models.ForeignKey(Independiente, on_delete=models.CASCADE)
     salarioBase=models.FloatField(null=True, blank=True)
     ibc=models.FloatField(validators=[MaxValueValidator(100),MinValueValidator(40)],null=True)
     salud=models.FloatField( max_length=50, default=12.5)
     pension=models.FloatField(max_length=50, default=16)
-    arl=models.CharField(blank=True,null=True, choices=arl, max_length=50)
-    CCF=models.CharField(blank=True,null=True, choices=CCF, max_length=50)
-    FSP=models.FloatField(blank=True,null=True)
+    arl=models.CharField(blank=True,null=True, choices=arl)
+    ccf=models.CharField(blank=True,null=True, choices=ccf)
+    fsp=models.FloatField(blank=True,null=True)
     
     
     

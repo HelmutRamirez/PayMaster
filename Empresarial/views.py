@@ -326,7 +326,7 @@ class CalculosGenerales(HttpRequest):
         arl=CalculosGenerales.nivelRiesgo(salario_base,nivel_riesgo)#se le debe sumar si aplica----> comisiones+Horas, extras, Bonificaciones habituales, Recargos nocturnos.
 
         #calculos de novedades
-        horas_extras=CalculosGenerales.horasExtras(salario_base_transpor,empleado)
+        horas_extras=CalculosGenerales.horasExtras(salario_base,empleado)
         horas_extras_diurnas = horas_extras['diurna']
         horas_extras_nocturnas = horas_extras['nocturna']
         horas_extras_diurnas_festivas = horas_extras['diurna_festiva']
@@ -408,13 +408,13 @@ class CalculosGenerales(HttpRequest):
             total_horas_diu_fest=Sum('HorasExFestivaDiu'),
             total_horas_noc_fest=Sum('HorasExFestivaNoc')
         )
-        salario=(salario/48)
+        salario=(1300000/240)
         # Calcular el valor de las horas extras usando los porcentajes establecidos
         valor_horas_extras = {
-            'diurna': (salario * 0.25) * (horas_extras['total_horas_diu'] or 0),
-            'nocturna': (salario * 0.75) * (horas_extras['total_horas_noc'] or 0),
-            'diurna_festiva': (salario * 1.0) * (horas_extras['total_horas_diu_fest'] or 0),
-            'nocturna_festiva': (salario * 1.5) * (horas_extras['total_horas_noc_fest'] or 0)
+            'diurna': (salario * 1.25) * (horas_extras['total_horas_diu'] or 0),
+            'nocturna': (salario * 1.75) * (horas_extras['total_horas_noc'] or 0),
+            'diurna_festiva': (salario * 2) * (horas_extras['total_horas_diu_fest'] or 0),
+            'nocturna_festiva': (salario * 2.5) * (horas_extras['total_horas_noc_fest'] or 0)
         }
         
         return valor_horas_extras

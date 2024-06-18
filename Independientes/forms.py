@@ -7,6 +7,9 @@ class IndependienteForm(forms.ModelForm):
     class Meta:
         model = Independiente
         fields ='__all__'
+        widgets={'fecha_nacimiento': forms.DateInput(attrs={'type':'date'}),
+                 'fecha_exp_documento': forms.DateInput(attrs={'type':'date'})
+                }
 
 
 class LoginForm(forms.Form):
