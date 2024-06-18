@@ -1,17 +1,17 @@
 from Independientes.forms import IndependienteForm,LoginForm,PasswordResetForm
 from .models import DatosCalculos, Independiente, Usuarios,PasswordResetRequest
-from django.shortcuts import render ,redirect, get_object_or_404 # type: ignore
-from django.contrib import messages # type: ignore
-from django.contrib.auth import logout # type: ignore
-from django.http import JsonResponse, HttpResponseRedirect # type: ignore
+from django.shortcuts import render ,redirect, get_object_or_404
+from django.contrib import messages
+from django.contrib.auth import logout
+from django.http import JsonResponse, HttpResponseRedirect
 from .forms import DatosCalculosForm, RecuperarContrasenaForm
-from django.core.mail import send_mail # type: ignore
-from django.template.loader import render_to_string # type: ignore
-from django.utils.html import strip_tags # type: ignore
-from django.http import HttpRequest # type: ignore
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.http import HttpRequest
 import secrets
-from django.utils.http import urlsafe_base64_decode # type: ignore
-from django.utils.encoding import force_str # type: ignore
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_str
 
 def cargar_token(request): 
         return render(request,'independientes/resetear_contrasena.html')
@@ -168,7 +168,8 @@ def RegistroIndependi(request):
     formulario = IndependienteForm(request.POST, request.FILES)
     if formulario.is_valid():
         formula = formulario.save()
-        raw_password = formula.primer_nombre
+        docu = formula.primer_nombre
+        raw_password = docu
         usuario = Usuarios(
             usuario=formula,
             intentos=0,

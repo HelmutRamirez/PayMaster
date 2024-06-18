@@ -57,7 +57,9 @@
             </tbody>
         </table>
         <br>
-        <a class="a" href="{% url 'homeEmpleado' empleado %}">Volver al menu </a>
+        <div class="volverB">
+            <a class="link" href="{% url 'ListarEmpresa' %}">Volver</a>
+          </div>
         <br>
         {% comment %} <a class="a" href="{% url 'ListarEmpleados' empleado.empresa %}">Volver a la lista de empleados</a> {% endcomment %}
     </div>
