@@ -1,7 +1,7 @@
 
 from datetime import date, datetime
-from django.db.models import Sum # type: ignore
-from django.utils import timezone # type: ignore
+from django.db.models import Sum
+from django.utils import timezone
 from django.shortcuts import render, get_object_or_404, redirect # type: ignore
 from Empresarial.forms import EmpresaForm, EmpleadoForm,LoginForm, PasswordResetForm,RecuperarContrasenaForm,NovedadesForm
 from .models import Empresa, Empleado, Usuarios, Calculos, Novedades, PasswordResetRequest
