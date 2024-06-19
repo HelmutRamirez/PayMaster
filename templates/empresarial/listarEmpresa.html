@@ -6,6 +6,7 @@
   <meta charset="UTF-8">
   <title>Empresas</title>
   <link rel="stylesheet" href="{% static 'css/tablas.css' %}">
+  <link rel="stylesheet" href="{% static 'css/home.css' %}">
   <link rel="shortcut icon" href="{% static 'image/logo2.png' %}" type="image/x-icon">
   <script src="{% static 'js/session_monitor.js' %}"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -100,10 +101,18 @@
             </tr>
           {% endfor %}
         </table>
-        <div class="volverB">
-          <a class="link" href="{% url 'homeEmpresa' %}">Volver</a>
-        </div>
+              {% if request.session.permisos == 'Contador' or request.session.permisos == 'Auxiliar Contable' %}
+              <div class="volverB">
+              
+                <a class="link" href="{% url 'registroEmpresa' %}">Registrar Empresa</a>
+              </div>
+              {% endif %}
+        <form id="logout-form" method="POST" action="{% url 'cerrar_sesion_redirect_e' %}">
+          {% csrf_token %}
+          <button class="opccion" type="submit">Cerrar Sesion</button>
+        </form>
       </div>
+      
     {% else %}
       <h1>El usuario no tiene permisos</h1>
       <a class="link" href="{% url 'loginEmpresa' %}">Iniciar sesión</a>

@@ -35,8 +35,9 @@
                                 <a class="a"  href="{% url 'editarIndependiente' independi.numero_identificacion %}">Editar datos</a>
                                 <a class="a"  href="{% url 'eliminaremple' independi.numero_identificacion %}">Eliminar</a>
                                 <a class="a"  href="{% url 'calcularinde' independi.numero_identificacion %}">Calcular</a>
-                            </td>
-                        
+                                {% comment %} <a class="a" href="{% url 'todos_los_calculos' independi.numero_identificacion %}">Ver nomina</a>
+                            {% endcomment %}
+                        </td> 
                         </tr>
                     </table>
 

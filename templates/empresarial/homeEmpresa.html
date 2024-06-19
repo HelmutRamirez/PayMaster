@@ -14,13 +14,17 @@
   <body>
     {% if request.session.estadoSesion %}
       {% if request.session.permisos == 'Contador' or request.session.permisos == 'Auxiliar Contable' or request.session.permisos == 'RRHH' %}
+
+         
         <div class="contenedor">
           <div class="titulo">
             <img src="{% static 'image/logo2.png' %}" alt="PayMaster">
-            <p>Bienvenido {{ independi.primer_nombre }}</p>
+            <p>Bienvenido {{ request.session.permisos }} {{ independi.primer_nombre }}</p>
+            
             <img src="{% static 'image/logo2.png' %}" alt="PayMaster">
+            
           </div>
-      
+          
 
           <div class="menu">
             

@@ -16,11 +16,9 @@
             <img src="{% static 'image/logo1.png' %}" alt="PayMaster">
             <p>PayMaster</p>
         </div>
-        <div class="volverB">
-            <a class="link volver" href="{% url 'loginEmpresa' %}">Volver</a>
-        </div>
+       
         <div class="login">
-            <h2>Cambio de Contraseña</h2>
+            <h2>Habilitar usuario</h2>
             {% if messages %}
                 <div>
                     {% for message in messages %}
@@ -33,7 +31,7 @@
                 {{ form }}
 
                 <div class="button">
-                    <button class="boton" type="submit">Guardar</button>
+                    <button class="boton" type="submit">activar</button>
                 </div>
             </form>
         </div>

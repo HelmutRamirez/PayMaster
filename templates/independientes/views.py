@@ -385,7 +385,7 @@ class CalculosGenerales(HttpRequest):
         return (arl)
         
 
-    def HistorialNomina(request,documento ):
+    def HistorialNomina(request,documento,fecha ):
      
         empleado = get_object_or_404(Independiente, pk=documento)
     
@@ -393,6 +393,7 @@ class CalculosGenerales(HttpRequest):
 
         calculos_empleado = Calculos.objects.filter(documento=empleado, fecha_calculos=fecha)
 
+        empresa = empleado.empresa.nit
         calculo = calculos_empleado.first()
             
 
@@ -408,7 +409,7 @@ class CalculosGenerales(HttpRequest):
         )
          
         context = {
-                
+                'empresa': empresa,
                 'fecha': calculo.fecha_calculos,
                 'empleado': empleado,
                 'salud': calculo.salud,
@@ -447,7 +448,7 @@ class CalculosGenerales(HttpRequest):
         }
         
         # Renderizar la plantilla con el contexto
-        return render(request, 'empresarial/HistoricoGeneral.html', context)
+        return render(request, 'independientes/HistoricoGeneral.html', context)
 
       
 

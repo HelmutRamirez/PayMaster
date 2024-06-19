@@ -4,6 +4,7 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="stylesheet" href="{% static 'css/tablas.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
     <link rel="shortcut icon" href="{% static 'image/logo2.png' %}" type="image/x-icon" />
     <title>Empleados</title>
   </head>
@@ -13,6 +14,9 @@
       {% if request.session.estadoSesion %}
         {% if request.session.permisos == 'Contador' or request.session.permisos == 'Auxiliar Contable' or request.session.permisos == 'RRHH' %}
           <h1>Lista de Empleados</h1>
+          <h3>Id empleado: {{ request.session.numero_identificacion }}</h3>
+          <h3>Rol: {{ request.session.permisos }}</h3>
+
           <table>
             <thead>
               <tr>
@@ -51,7 +55,11 @@
           </table>
           <div class="volverB">
             <a class="link" href="{% url 'ListarEmpresa' %}">Volver</a>
+            
           </div>
+              {% if request.session.permisos == 'RRHH' %}     
+              <a class="opccion" href="{% url 'registroEmpleado' %}">Registrar empleado</a>
+              {% endif %}
         {% else %}
           <h1>El usuario no tiene permisos suficientes</h1>
         {% endif %}

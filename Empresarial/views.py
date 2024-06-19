@@ -127,9 +127,10 @@ class GestionLogin:
                             data = {'independi': indepe}
 
                             if permisos == 'Contador' or permisos == 'Auxiliar Contable' or permisos == 'RRHH':
-                                return render(request, 'empresarial/homeEmpresa.html', data)
+                                # return render(request, 'empresarial/listarEmpresa.html', data)
+                                return redirect('ListarEmpresa')
                             elif permisos == 'Empleado General':
-                                return render(request, 'empresarial/Empleado.html', data)
+                                return redirect('ListarEmpresa')
 
                         else:
                             
@@ -601,7 +602,7 @@ class CalculosGenerales(HttpRequest):
         # Preparar el contexto
         context = {
             'calculos': todos_los_calculos,
-            'empleado':numero_identificacion
+            'empleado':empleado
         }
         
         # Renderizar la plantilla con el contexto
