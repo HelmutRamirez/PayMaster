@@ -32,9 +32,9 @@
                             <td>{{ independi.celular }}</td>
                             <td><img src="{{ independi.imagen.url }}" alt="Imagen" width="50"></td>
                             <td>
-                                <a class="a"  href="{% url 'editarIndependiente' independi.numero_identificacion %}">Editar datos</a>
-                                <a class="a"  href="{% url 'eliminaremple' independi.numero_identificacion %}">Eliminar</a>
-                                <a class="a"  href="{% url 'calcularinde' independi.numero_identificacion %}">Calcular</a>
+                                <a class="a" href="{% url 'editarIndependiente' independi.numero_identificacion %}">Editar datos</a>
+                                <a class="a" href="#" onclick="confirmDelete(event, '{% url 'eliminaremple' independi.numero_identificacion %}')">Eliminar</a>
+                                <a class="a" href="{% url 'calcularinde' independi.numero_identificacion %}">Calcular</a>
                                 {% comment %} <a class="a" href="{% url 'todos_los_calculos' independi.numero_identificacion %}">Ver nomina</a>
                             {% endcomment %}
                         </td> 
@@ -59,6 +59,13 @@
         {% endif %}
 
     <script>
+        function confirmDelete(event, url) {
+            event.preventDefault();
+            if (confirm("¿Está seguro de que desea eliminar este registro?")) {
+                window.location.href = url;
+            }
+        }
+
         window.addEventListener('popstate', function(event) {
             // Prevenir el comportamiento por defecto
             event.preventDefault();

@@ -60,7 +60,6 @@ class RecuperarContrasenaForm(forms.Form):
 class PasswordResetForm(forms.Form):
     token = forms.CharField(label='Token')
     new_password = forms.CharField(label='Nueva Contraseña', widget=forms.PasswordInput)
-    
     confirm_password = forms.CharField(label='Confirmar Contraseña', widget=forms.PasswordInput)
 
 class habilitarCuentaForm(forms.Form):

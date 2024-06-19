@@ -65,9 +65,19 @@
             </tbody>
         </table>
         <br>
-        <a class="a" href="{% url 'ListarEmpresa' %}">Volver al menu </a>
-        <br>
-        <a class="a" href="{% url 'ListarEmpleados' nit=empleado.empresa.nit %}">Volver a empleados</a>
+        
+        <div class="volverB">
+            {% if request.session.permisos == 'Contador' or request.session.permisos == 'Auxiliar Contable' or request.session.permisos == 'RRHH' or request.session.permisos == 'Admin' %}
+            <a class="a" href="{% url 'ListarEmpleados' nit=empleado.empresa.nit %}">Volver a empleados</a>
+            {% endif %}
+       
+        </div>
+        <div class="volverB">
+            {% if request.session.permisos == 'Empleado General' %}
+        <a class="a" href="{% url 'homeEmpleado' empleado.numero_identificacion %}">Volver al home </a>
+            {% endif %}
+        </div>
+        <a class="link" href="{% url 'ListarEmpresa' %}" class="btn btn-info">Volver empresa</a>
     </div>
     
 </body>

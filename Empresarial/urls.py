@@ -19,7 +19,7 @@ urlpatterns = [
 
     #Gestion de empleado
     path('empleado/<int:numero_identificacion>', views.Paginas.homeEmpleado, name='homeEmpleado'),
-    path('registroEmpleado', views.GestionEmpleado.crearEmpleado, name='registroEmpleado'),
+    path('registroEmpleado/<int:nit>', views.GestionEmpleado.crearEmpleado, name='registroEmpleado'),
     path('listarEmpleados/<int:nit>', views.GestionEmpleado.ListarEmpleados, name='ListarEmpleados'), #redirecion para ver los empleados
     path('editarEmpleado/<int:numero_identificacion>/', views.GestionEmpleado.editarEmpleado, name='editarEmpleado'),
     path('actualizar/<int:numero_identificacion>/', views.GestionEmpleado.actualizarEmpleado, name='actualizarEmpleado'),

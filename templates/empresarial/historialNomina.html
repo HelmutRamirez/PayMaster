@@ -7,6 +7,8 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/tablas.css' %}">
 </head>
 <body>
+    {% if request.session.estadoSesion %}
+    {% if request.session.permisos == 'Contador' or request.session.permisos == 'Auxiliar Contable' or request.session.permisos == 'RRHH' or request.session.permisos == 'Admin' or request.session.permisos == 'Empleado General' %}
     <div class="contenedor">
         <h3>Resultado de Cálculo nomina:  {{ empleado.primer_nombre }}  {{ empleado.primer_apellido }} </h3>
         <h3>fecha:  {{ fecha }}</h3> 
@@ -80,13 +82,33 @@
             </tr>
         </table>
 
+
+
+
+    {% else %}
+      <h1>El usuario no tiene permisos suficientes</h1>
+    {% endif %}
+  {% else %}
+    <h1>El usuario no ha iniciado sesión</h1>
+    <a class="link" href="{% url 'loginEmpresa' %}">Iniciar sesión</a>
+  {% endif %}
         <br>
         <div class="volverB">
-            <a class="a" href="{% url 'todos_los_calculos' empleado.numero_identificacion %}">Volver a del empleado nominas {}</a>
-            
-         
-          </div>
-
+            {% if request.session.permisos == 'Contador' or request.session.permisos == 'Auxiliar Contable' or request.session.permisos == 'RRHH' or request.session.permisos == 'Admin' %}
+            <a class="a" href="{% url 'todos_los_calculos' empleado.numero_identificacion %}">Volver a ver nominas </a>
+            {% endif %}
+       
+        </div>
+        <div class="volverB">
+            {% if request.session.permisos == 'Empleado General' %}
+            <a class="a" href="{% url 'todos_los_calculos' empleado.numero_identificacion %}">Volver a ver nominas </a>
+            {% endif %}
+            <a class="link" href="{% url 'ListarEmpresa' %}" class="btn btn-info">Volver a empresas</a>
+            <br>
+        </div>
+            {% if request.session.permisos == 'RRHH' or request.session.permisos == 'Contador' or request.session.permisos == 'Auxiliar Contable' %}
+            <a class="link" href="{% url 'ListarEmpleados' empleado.empresa.nit %}" class="btn btn-info">Volver a empleados</a>
+            {% endif %}
     </div>
 </body>
 </html>

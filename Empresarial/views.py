@@ -16,6 +16,8 @@ from django.utils.http import urlsafe_base64_decode # type: ignore
 from django.utils.encoding import force_str # type: ignore
 from django.http import JsonResponse # type: ignore
 from django.views.decorators.http import require_POST # type: ignore
+import re
+
 
 class GestionLogin:
 
@@ -58,35 +60,46 @@ class GestionLogin:
             if form.is_valid():
                 token = form.cleaned_data['token']
                 new_password = form.cleaned_data['new_password']
-
+                confirm_password = form.cleaned_data['confirm_password']
+                
                 try:
                     reset_request = PasswordResetRequest.objects.get(token=token, used=False)
                 except PasswordResetRequest.DoesNotExist:
                     reset_request = None
 
-                if reset_request:
-                    usuario = reset_request.usuario  # Ajusta según tu modelo de PasswordResetRequest
-                    usuario = Usuarios.objects.get(usuario=usuario)
-                    
-                    
-                    usuario.set_password(new_password)
-
-                    reset_request.used = True
-                    reset_request.save()
-
-                    usuario.intentos = 0
-                    usuario.estado_u = True
-                    usuario.save()
-                    
-                    messages.success(request, 'Contraseña actualizada correctamente. Por favor, inicia sesión.')
-                    return redirect('loginEmpresa')  # Redirige a la página de inicio de sesión después de cambiar la contraseña
-
+                if new_password != confirm_password:
+                    messages.error(request, 'Las contraseñas no coinciden.')
                 else:
-                    messages.error(request, 'El token de restablecimiento de contraseña no es válido o ya ha sido utilizado.')
-            
+                    if len(new_password) < 6:
+                        messages.error(request, 'La contraseña debe tener al menos 6 caracteres.')
+                    elif not re.search(r'[A-Za-z]', new_password):
+                        messages.error(request, 'La contraseña debe contener al menos una letra.')
+                    elif not re.search(r'[A-Z]', new_password):
+                        messages.error(request, 'La contraseña debe contener al menos una letra Mayuscula.')
+                           
+                    elif not re.search(r'\d', new_password):
+                        messages.error(request, 'La contraseña debe contener al menos un número.')
+                    elif not re.search(r'[!@#$%^&*(),.?":{}|<>]', new_password):
+                        messages.error(request, 'La contraseña debe contener al menos un carácter especial.')
+                    elif reset_request:
+                        usuario = reset_request.usuario  # Ajusta según tu modelo de PasswordResetRequest
+                        usuario = Usuarios.objects.get(usuario=usuario)
+                        
+                        usuario.set_password(new_password)
+
+                        reset_request.used = True
+                        reset_request.save()
+
+                        usuario.intentos = 0
+                        usuario.estado_u = True
+                        usuario.save()
+                        
+                        messages.success(request, 'Contraseña actualizada correctamente. Por favor, inicia sesión.')
+                        return redirect('loginEmpresa')  # Redirige a la página de inicio de sesión después de cambiar la contraseña
+                    else:
+                        messages.error(request, 'El token de restablecimiento de contraseña no es válido o ya ha sido utilizado.')
             else:
                 messages.error(request, 'Por favor, corrige los errores del formulario.')
-
         else:
             form = PasswordResetForm()
 
@@ -130,7 +143,7 @@ class GestionLogin:
                                 # return render(request, 'empresarial/listarEmpresa.html', data)
                                 return redirect('ListarEmpresa')
                             elif permisos == 'Empleado General':
-                                return redirect('ListarEmpresa')
+                                return redirect('homeEmpleado',numero_identificacion=numero_identificacion)
 
                         else:
                             
@@ -205,28 +218,30 @@ class Paginas(HttpRequest):
 
 class GestionEmpleado(HttpRequest):
    
-    def crearEmpleado(request):
-        formulario = EmpleadoForm(request.POST, request.FILES)
-        if formulario.is_valid():
-            formula=formulario.save()
-            raw_password = formula.primer_nombre + str(formula.numero_identificacion)+'@'
-            usuario = Usuarios(
-                usuario=formula,
-                intentos=0,
-                estado_u=False,
-                id_rol='Empleado General'
-            )
-            usuario.set_password(raw_password)  
-            usuario.save()
-            # novedades = Novedades(
-            #     empleado=formula,
-            # )
-            # novedades.save()
-            formulario = EmpleadoForm()
-            return redirect('homeEmpresa') 
-        return render(request, 'empresarial/registroEmpleado.html', {'form': formulario, 'mensaje': 'ok'})
+    def crearEmpleado(request, nit):
+        empresa = get_object_or_404(Empresa, nit=nit)  # Obtén la empresa basada en el nit
 
-    
+        if request.method == 'POST':
+            formulario = EmpleadoForm(request.POST, request.FILES)
+            if formulario.is_valid():
+                formula = formulario.save(commit=False)
+                formula.empresa = empresa  # Asigna la empresa al empleado
+                formula.save()
+                raw_password = formula.primer_nombre + str(formula.numero_identificacion) + '@'
+                usuario = Usuarios(
+                    usuario=formula,
+                    intentos=0,
+                    estado_u=False,
+                    id_rol='Empleado General'
+                )
+                usuario.set_password(raw_password)
+                usuario.save()
+                return redirect('ListarEmpleados', empresa.nit)
+        else:
+            formulario = EmpleadoForm(initial={'empresa': empresa.nit})  # Inicializa el formulario con el valor de la empresa
+
+        return render(request, 'empresarial/registroEmpleado.html', {'form': formulario, 'mensaje': 'ok','empresa': empresa.nit})
+        
     def ListarEmpleados(request,nit):
 
         empresa = Empresa.objects.get(pk=nit)
@@ -266,9 +281,13 @@ class GestionEmpleado(HttpRequest):
 
     def eliminarEmpleado(request, numero_identificacion):
         empleado=Empleado.objects.get(pk=numero_identificacion)
+        empresa=empleado.empresa.nit
         empleado.delete()
-        emple=Empleado.objects.all() 
-        return render (request, 'listarEmpleado.html', { "get_empleados": emple})
+        data = {
+            'empresa': empresa
+        }
+        return render(request, 'empresarial/listarEmpleado.html', data)
+       
 
 class GestionarEmpresa(HttpRequest):
     def crearEmpresa(request):
@@ -276,6 +295,7 @@ class GestionarEmpresa(HttpRequest):
         if formulario.is_valid():
             formulario.save()
             formulario = EmpresaForm()
+            return redirect('ListarEmpresa')
         return render(request, 'empresarial/registroEmpresa.html', {'form': formulario, 'mensaje': 'ok'})
 
     def ListarEmpresa(request):
@@ -298,10 +318,13 @@ class GestionarEmpresa(HttpRequest):
         return render(request, 'empresarial/listarEmpresa.html', {"get_empresa": empresa})
     
     def eliminarEmpresa(request, nit):
-        empresa=Empresa.objects.get(pk=nit)
-        empresa.delete()
+        get_empresa=Empresa.objects.get(pk=nit)
+        get_empresa.delete()
         empre=Empresa.objects.all() 
-        return render (request, 'listarEmpresa.html', { "get_empresa": empre})
+        data = {
+            'get_empresa': empre
+        }
+        return redirect('ListarEmpresa')
     
 class CalculosGenerales(HttpRequest):
     def calcularSalario(request, numero_identificacion):
@@ -496,8 +519,9 @@ class CalculosGenerales(HttpRequest):
         
         # Calcular la diferencia en días entre hoy y la fecha ingresada
         dias_diferencia = (hoy - fecha_ingresada).days
-        antiguedad_dias = dias_diferencia-1
-        
+       
+        if dias_diferencia >0:
+            dias_diferencia -=1
         # Establecer la fecha de referencia
         fecha_referencia = datetime(hoy.year, 1, 1)
         
@@ -507,12 +531,12 @@ class CalculosGenerales(HttpRequest):
         
         # Clasificar los días trabajados
         if fecha_ingresada < fecha_referencia:
-            dias_trabajados_anteriores = (fecha_referencia - fecha_ingresada).days-1
-            dias_trabajados_actuales = dias_diferencia - dias_trabajados_anteriores-1
+            dias_trabajados_anteriores = (fecha_referencia - fecha_ingresada).days
+            dias_trabajados_actuales = dias_diferencia - dias_trabajados_anteriores
         else:
-            dias_trabajados_actuales = dias_diferencia-1
+            dias_trabajados_actuales = dias_diferencia
         
-        return dias_trabajados_anteriores, dias_trabajados_actuales, antiguedad_dias
+        return dias_trabajados_anteriores, dias_trabajados_actuales, dias_diferencia
     
     def calculoCesantias(salario_base_transpor,dias_trabajados_actuales):
         #Como el salario ha variado todo el tiempo, unas veces por incremento o disminución 
@@ -534,7 +558,6 @@ class CalculosGenerales(HttpRequest):
         
     def registroNovedades(request, numero_identificacion):
         empleado = get_object_or_404(Empleado, pk=numero_identificacion)
-        
         if request.method == 'POST':
             formularioNov = NovedadesForm(request.POST)
             if formularioNov.is_valid():
@@ -560,7 +583,7 @@ class CalculosGenerales(HttpRequest):
                 (novedad.HorasExFestivaNoc or 0) + (novedad.HorasExFestivaDiu or 0) > limite_maximo_horas:
                     error_message = f"La suma de horas excede el límite máximo permitido de {limite_maximo_horas} horas en el mes."
                 
-                    return render(request, 'empresarial/novedadesForm.html', {'formularioNov': formularioNov, 'error_message': error_message})
+                    return render(request, 'empresarial/novedadesForm.html', {'formularioNov': formularioNov, 'error_message': error_message,'empleado':empleado})
                 novedad.save()
                     
                 return redirect('ListarEmpleados', nit=empleado.empresa.nit)

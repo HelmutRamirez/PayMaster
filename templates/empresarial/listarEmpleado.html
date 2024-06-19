@@ -12,7 +12,7 @@
   <body>
     <div class="contenedor">
       {% if request.session.estadoSesion %}
-        {% if request.session.permisos == 'Contador' or request.session.permisos == 'Auxiliar Contable' or request.session.permisos == 'RRHH' %}
+        {% if request.session.permisos == 'Contador' or request.session.permisos == 'Auxiliar Contable' or request.session.permisos == 'RRHH' or request.session.permisos == 'Admin' %}
           <h1>Lista de Empleados</h1>
           <h3>Id empleado: {{ request.session.numero_identificacion }}</h3>
           <h3>Rol: {{ request.session.permisos }}</h3>
@@ -43,10 +43,11 @@
                   <td>
                     {% if request.session.permisos == 'RRHH' %}
                       <a class="a" href="{% url 'editarEmpleado' empleado_data.empleado.numero_identificacion %}">EDITAR</a>
-                      <a class="a" href="{% url 'eliminaremple' empleado_data.empleado.numero_identificacion %}">Eliminar</a>
+                      <a class="a" href="{% url 'eliminaremple' empleado_data.empleado.numero_identificacion %}">Eliminar</a><br>
+                      <br>
                       <a class="a" href="{% url 'registroNovedades' empleado_data.empleado.numero_identificacion %}">Registrar Novedades</a>
                     {% endif %}
-                     {% if request.session.permisos == 'Contador' or request.session.permisos == 'Auxiliar Contable' %}
+                     {% if request.session.permisos == 'Contador' or request.session.permisos == 'Auxiliar Contable' or request.session.permisos == 'Admin' %}
                       <a class="a" href="{% url 'calcularemple' empleado_data.empleado.numero_identificacion %}">Calcular</a>
                       <a class="a" href="{% url 'todos_los_calculos' empleado_data.empleado.numero_identificacion %}">Ver nomina</a>
                     {% endif %} 
@@ -59,8 +60,8 @@
             <a class="link" href="{% url 'ListarEmpresa' %}">Volver</a>
             
           </div>
-              {% if request.session.permisos == 'RRHH' %}     
-              <a class="opccion" href="{% url 'registroEmpleado' %}">Registrar empleado</a>
+              {% if request.session.permisos == 'RRHH' or request.session.permisos == 'Admin' %}     
+              <a class="opccion" href="{% url 'registroEmpleado' empresa.nit %}">Registrar empleado</a>
               {% endif %}
         {% else %}
           <h1>El usuario no tiene permisos suficientes</h1>

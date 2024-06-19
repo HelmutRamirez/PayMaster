@@ -9,11 +9,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="shortcut icon" href="{% static 'image/logo2.png' %}" type="image/x-icon" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/fomularios.css' %}" />
+    
+
     <title>Editar Empleado</title>
   </head>
   <body>
     {% if request.session.estadoSesion %}
-      {% if request.session.permisos == 'RRHH'%}
+      {% if request.session.permisos == 'RRHH' or request.session.permisos == 'Admin' %}
         <div class="contenedor">
           <h1>Editar Empleado</h1>
           <form action="{% url 'actualizarEmpleado' empleado.numero_identificacion %}" method="POST" enctype="multipart/form-data">
@@ -27,7 +29,11 @@
         </div>
       {% else %}
         <h1>El usuario no tiene permisos</h1>
-        <a class="link" href="{% url 'loginEmpresa' %}">Iniciar sesión</a>
+        <div class="volverB">
+           <br>
+              <a class="link" href="{% url 'loginEmpresa' %}">Iniciar sesión</a>    
+      </div>
+   
       {% endif %}
     {% else %}
       <h1>El usuario no ha iniciado sesión</h1>

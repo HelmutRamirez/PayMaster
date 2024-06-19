@@ -1,4 +1,5 @@
 from datetime import datetime
+import re
 from Independientes.forms import IndependienteForm,LoginForm,PasswordResetForm,habilitarCuentaForm
 from .models import DatosCalculos, Independiente, Usuarios,PasswordResetRequest,Calculos
 from django.shortcuts import render ,redirect, get_object_or_404 
@@ -59,35 +60,51 @@ class GestionLogin:
             if form.is_valid():
                 token = form.cleaned_data['token']
                 new_password = form.cleaned_data['new_password']
-
+                confirm_password = form.cleaned_data['confirm_password']
+                
                 try:
                     reset_request = PasswordResetRequest.objects.get(token=token, used=False)
                 except PasswordResetRequest.DoesNotExist:
                     reset_request = None
 
-                if reset_request:
-                    usuario = reset_request.usuario  # Ajusta según tu modelo de PasswordResetRequest
-                    usuario = Usuarios.objects.get(usuario=usuario)
-                    
-                    
-                    usuario.set_password(new_password)
-
-                    reset_request.used = True
-                    reset_request.save()
-
-                    messages.success(request, 'Contraseña actualizada correctamente. Por favor, inicia sesión.')
-                    return redirect('login')  # Redirige a la página de inicio de sesión después de cambiar la contraseña
-
+                if new_password != confirm_password:
+                    messages.error(request, 'Las contraseñas no coinciden.')
                 else:
-                    messages.error(request, 'El token de restablecimiento de contraseña no es válido o ya ha sido utilizado.')
-            
+                    if len(new_password) < 6:
+                        messages.error(request, 'La contraseña debe tener al menos 6 caracteres.')
+                    elif not re.search(r'[A-Za-z]', new_password):
+                        messages.error(request, 'La contraseña debe contener al menos una letra.')
+                    elif not re.search(r'[A-Z]', new_password):
+                        messages.error(request, 'La contraseña debe contener al menos una letra Mayuscula.')
+                           
+                    elif not re.search(r'\d', new_password):
+                        messages.error(request, 'La contraseña debe contener al menos un número.')
+                    elif not re.search(r'[!@#$%^&*(),.?":{}|<>]', new_password):
+                        messages.error(request, 'La contraseña debe contener al menos un carácter especial.')
+                    elif reset_request:
+                        usuario = reset_request.usuario  # Ajusta según tu modelo de PasswordResetRequest
+                        usuario = Usuarios.objects.get(usuario=usuario)
+                        
+                        usuario.set_password(new_password)
+
+                        reset_request.used = True
+                        reset_request.save()
+
+                        usuario.intentos = 0
+                        usuario.estado_u = True
+                        usuario.save()
+                        
+                        messages.success(request, 'Contraseña actualizada correctamente. Por favor, inicia sesión.')
+                        return redirect('login')  # Redirige a la página de inicio de sesión después de cambiar la contraseña
+                    else:
+                        messages.error(request, 'El token de restablecimiento de contraseña no es válido o ya ha sido utilizado.')
             else:
                 messages.error(request, 'Por favor, corrige los errores del formulario.')
-
         else:
             form = PasswordResetForm()
 
         return render(request, 'independientes/password_reset.html', {'form': form})
+                
 
 
 

@@ -62,7 +62,7 @@ class Empleado(models.Model):
     fecha_ingreso = models.DateField(null=True)
     nivel_riesgo=models.CharField(max_length=10, choices=nivel_riesgo,null=True)
     antiguedad = models.FloatField(validators=[MinValueValidator(0.0)],null=True)
-    salario=models.FloatField(validators=[MinValueValidator(1300000)],null=True)
+    salario=models.FloatField(validators=[MinValueValidator(1300000)],default=1300000,null=True)
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE,blank=True, null=True) 
     imagen=models.ImageField(upload_to='photos')
 
@@ -73,6 +73,7 @@ class Empleado(models.Model):
 
 class Usuarios(models.Model):
     id_rol=[
+        ('Admin', 'Admin'),
         ('Contador', 'Contador'),
         ('Auxiliar Contable', 'Auxiliar Contable'),
         ('RRHH', 'RRHH'),
