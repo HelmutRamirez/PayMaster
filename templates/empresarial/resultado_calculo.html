@@ -18,6 +18,7 @@
                 <th>Transporte</th>
                 <th>Cesantías</th>
                 <th>Intereses de Cesantías</th>
+                <th>Antiguedad</th>
                 <th>Vacaciones</th>
                 <th>Días de Vacaciones</th>
                 <th>Horas Extras Diurnas</th>
@@ -29,6 +30,9 @@
                 <td>{{ transporte|floatformat:"0" }}</td>
                 <td>{{ cesantias|floatformat:"0" }}</td>
                 <td>{{ intereses_cesantias|floatformat:"0" }}</td>
+
+                <td>Ingreso:{{ dias_trabajados }},{{ dias_antiguedad }}dias de antiguedad</td>
+
                 <td>{{ valor_vacaciones|floatformat:"0" }}</td>
                 <td>{{ dias_vacaciones|floatformat:"0" }}</td>
                 <td>{{ valor_horas_extras.diurna|floatformat:"0" }}</td>
@@ -54,13 +58,16 @@
         <!-- Tabla de Pagos que realiza la Empresa -->
         <h2>Pagos que realiza la Empresa</h2>
         <table>
-            <tr>
+            <tr><th>Salud</th>
+                <th>Pension</th>
                 <th>ARL</th>
                 <th>SENA</th>
                 <th>ICBF</th>
                 <th>Caja de Compensación</th>
             </tr>
             <tr>
+                <td>{{ salud_empeador|floatformat:"0" }}</td>
+                <td>{{ pension_empleador|floatformat:"0" }}</td>
                 <td>{{ arl|floatformat:"0" }}</td>
                 <td>{{ sena|floatformat:"0" }}</td>
                 <td>{{ ICBF|floatformat:"0" }}</td>

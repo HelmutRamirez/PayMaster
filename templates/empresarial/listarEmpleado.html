@@ -22,32 +22,34 @@
               <tr>
                 <th>Identificación</th>
                 <th>Nombre</th>
-                <th>Celular</th>
+                <th>Aniguedad</th>
+                <th>Correo</th>
                 <th>Empresa</th>
                 <th>Imagen</th>
                 <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
-              {% for empleado in get_empleados %}
+              {% for empleado_data in empleados_con_antiguedad %}
                 <tr>
-                  <td>{{ empleado.numero_identificacion }}</td>
-                  <td>{{ empleado.primer_nombre }} {{ empleado.primer_apellido }}</td>
-                  <td>{{ empleado.correo }}</td>
-                  <td>{{ empleado.empresa }}</td>
+                  <td>{{ empleado_data.empleado.numero_identificacion }}</td>
+                  <td>{{ empleado_data.empleado.primer_nombre }} {{ empleado.empleado.primer_apellido }}</td>
+                  <td>{{ empleado_data.empleado.fecha_ingreso }} Antiguiedad {{ empleado_data.antiguedad }} dias</td>
+                  <td>{{ empleado_data.empleado.correo }}</td>
+                  <td>{{ empleado_data.empleado.empresa }}</td>
                   <td>
-                    <img src="{{ empleado.imagen.url }}" alt="Imagen" width="50" />
+                    <img src="{{ empleado_data.empleado.imagen.url }}" alt="Imagen" width="50" />
                   </td>
                   <td>
                     {% if request.session.permisos == 'RRHH' %}
-                      <a class="a" href="{% url 'editarEmpleado' empleado.numero_identificacion %}">EDITAR</a>
-                      <a class="a" href="{% url 'eliminaremple' empleado.numero_identificacion %}">Eliminar</a>
-                      <a class="a" href="{% url 'registroNovedades' empleado.numero_identificacion %}">Registrar Novedades</a>
+                      <a class="a" href="{% url 'editarEmpleado' empleado_data.empleado.numero_identificacion %}">EDITAR</a>
+                      <a class="a" href="{% url 'eliminaremple' empleado_data.empleado.numero_identificacion %}">Eliminar</a>
+                      <a class="a" href="{% url 'registroNovedades' empleado_data.empleado.numero_identificacion %}">Registrar Novedades</a>
                     {% endif %}
-                    {% if request.session.permisos == 'Contador' or request.session.permisos == 'Auxiliar Contable' %}
-                      <a class="a" href="{% url 'calcularemple' empleado.numero_identificacion %}">Calcular</a>
-                      <a class="a" href="{% url 'todos_los_calculos' empleado.numero_identificacion %}">Ver nomina</a>
-                    {% endif %}
+                     {% if request.session.permisos == 'Contador' or request.session.permisos == 'Auxiliar Contable' %}
+                      <a class="a" href="{% url 'calcularemple' empleado_data.empleado.numero_identificacion %}">Calcular</a>
+                      <a class="a" href="{% url 'todos_los_calculos' empleado_data.empleado.numero_identificacion %}">Ver nomina</a>
+                    {% endif %} 
                   </td>
                 </tr>
               {% endfor %}

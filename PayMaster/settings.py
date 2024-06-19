@@ -143,7 +143,7 @@ EMAIL_HOST_PASSWORD = 'krwj apcj sols uowd'  # Cambiar por tu contraseña
 
 
 # Duración de la sesión en segundos (default: 2 semanas)
-SESSION_COOKIE_AGE = 60 * 15  # 15 minutos
+SESSION_COOKIE_AGE = 60 * 10  # 15 minutos
 LOGOUT_REDIRECT_URL = '/accounts/login/'
 # Tiempo de expiración de sesión inactivo en segundos (default: None)
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # La sesión expira cuando se cierra el navegador

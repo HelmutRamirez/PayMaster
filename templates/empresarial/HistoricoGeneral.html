@@ -21,7 +21,9 @@
                     <th>Transporte</th>
                     <th>Salario Base</th>
                     <th>Caja Compensación</th>
+                    {% if calculo.sena %}
                     <th>SENA</th>
+                    {% endif %}
                     {% if calculo.icbf %}
                     <th>ICBF</th>
                     {% endif %}
@@ -46,8 +48,9 @@
                         {% if calculo.cajaCompensacion %}
                     <td>{{ calculo.cajaCompensacion }}</td>
                          {% endif %}
-                         
+                            {% if calculo.sena %}
                     <td>{{ calculo.sena }}</td>
+                             {% endif %}
                         {% if calculo.icbf %}
                     <td>{{ calculo.icbf }}</td>
                         {% endif %}

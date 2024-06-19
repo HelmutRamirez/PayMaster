@@ -231,11 +231,25 @@ class GestionEmpleado(HttpRequest):
 
         empresa = Empresa.objects.get(pk=nit)
         get_empleados = Empleado.objects.filter(empresa=empresa)
+        
+        empleados_con_antiguedad = []
+        for empleado in get_empleados:
+            fecha_ingreso = empleado.fecha_ingreso
+            dias_trabajados_anteriores, dias_trabajados_actuales, antiguedad_dias = CalculosGenerales.diasTrabajados(fecha_ingreso)
+            empleados_con_antiguedad.append({
+                'empleado': empleado,
+                'antiguedad': antiguedad_dias
+            })
+        
         data = {
-            'get_empleados': get_empleados,
-            'empresa': empresa  
+            'empleados_con_antiguedad': empleados_con_antiguedad,
+            'empresa': empresa
         }
+        
         return render(request, 'empresarial/listarEmpleado.html', data)
+    
+
+        return HttpResponseNotFound("La empresa solicitada no existe.")
     
     def editarEmpleado(request, numero_identificacion):
         empleado = Empleado.objects.get(pk=numero_identificacion)
@@ -307,7 +321,7 @@ class CalculosGenerales(HttpRequest):
         if existe_calculo:
             mensaje = "Ya se ha calculado la nómina para este mes."
             response = redirect('ListarEmpleados', nit=empleado.empresa.nit)
-            response.set_cookie('mensaje_nomina_calculada', mensaje)
+            
             return response
         
         # Si no existe el cálculo, procedemos a realizarlo
@@ -321,8 +335,11 @@ class CalculosGenerales(HttpRequest):
 
         #caclulos de aportes seguridad sociales
         salario_base_sin_trasnpo=salario_base
-        salud = salario_base_sin_trasnpo * 0.04#se le debe sumar si aplica----> comisiones+Horas, extras, Bonificaciones habituales, Recargos nocturnos.
-        pension = salario_base_sin_trasnpo * 0.04#se le debe sumar si aplica----> comisiones+Horas, extras, Bonificaciones habituales, Recargos nocturnos.
+        salud = salario_base_sin_trasnpo * 0.04
+        salud_empleador=salario_base_sin_trasnpo * 0.085#se le debe sumar si aplica----> comisiones+Horas, extras, Bonificaciones habituales, Recargos nocturnos.
+        pension = salario_base_sin_trasnpo * 0.04
+        pension_empleador = salario_base_sin_trasnpo * 0.12
+        #se le debe sumar si aplica----> comisiones+Horas, extras, Bonificaciones habituales, Recargos nocturnos.
         nivel_riesgo = int(empleado.nivel_riesgo)
         arl=CalculosGenerales.nivelRiesgo(salario_base,nivel_riesgo)#se le debe sumar si aplica----> comisiones+Horas, extras, Bonificaciones habituales, Recargos nocturnos.
 
@@ -353,6 +370,7 @@ class CalculosGenerales(HttpRequest):
             cajaCompensacion=cajaCompensacion,
             sena=sena,
             icbf=icbf,
+            antiguedad=dias_antiguedad,
             cesantias=cesantias,
             interesCesantias=intereses_cesantias,
             vacaciones=valor_vacaciones,
@@ -365,6 +383,10 @@ class CalculosGenerales(HttpRequest):
             recargoDiuFes=recargo1,
             recargoNoc=recargo2,
             recargoNocFest=recargo3,
+            salud_empeador=salud_empleador,
+            pension_empleador=pension_empleador,
+            
+            
         )
         calculos.save()
         
@@ -374,6 +396,7 @@ class CalculosGenerales(HttpRequest):
         salario_total = transporte + total_valor_horas_extras + salario_base_transpor
         
         context = {
+            'calculos':calculos,
             'empresa': empresa,
             'empleado': numero_identificacion,
             'salud': salud,
@@ -386,9 +409,14 @@ class CalculosGenerales(HttpRequest):
             'cesantias': cesantias,
             'intereses_cesantias': intereses_cesantias,
             'valor_vacaciones': valor_vacaciones,
+            'antiguedad':dias_antiguedad,
             'dias_vacaciones': dias_vacaciones,
             'valor_horas_extras': horas_extras,
-            'salario_total': salario_total
+            'salario_total': salario_total,
+            'salud_empeador':salud_empleador,
+            'pension_empleador':pension_empleador,
+            'dias_antiguedad':dias_antiguedad,
+            'dias_trabajados':dias_trabajados
         }
         
         return render(request, 'empresarial/resultado_calculo.html', context)
@@ -409,7 +437,7 @@ class CalculosGenerales(HttpRequest):
             total_horas_diu_fest=Sum('HorasExFestivaDiu'),
             total_horas_noc_fest=Sum('HorasExFestivaNoc')
         )
-        salario=(1300000/240)
+        salario=(salario/235)
         # Calcular el valor de las horas extras usando los porcentajes establecidos
         valor_horas_extras = {
             'diurna': (salario * 1.25) * (horas_extras['total_horas_diu'] or 0),
@@ -468,7 +496,7 @@ class CalculosGenerales(HttpRequest):
         
         # Calcular la diferencia en días entre hoy y la fecha ingresada
         dias_diferencia = (hoy - fecha_ingresada).days
-        antiguedad_dias = dias_diferencia
+        antiguedad_dias = dias_diferencia-1
         
         # Establecer la fecha de referencia
         fecha_referencia = datetime(hoy.year, 1, 1)
@@ -479,10 +507,10 @@ class CalculosGenerales(HttpRequest):
         
         # Clasificar los días trabajados
         if fecha_ingresada < fecha_referencia:
-            dias_trabajados_anteriores = (fecha_referencia - fecha_ingresada).days
-            dias_trabajados_actuales = dias_diferencia - dias_trabajados_anteriores
+            dias_trabajados_anteriores = (fecha_referencia - fecha_ingresada).days-1
+            dias_trabajados_actuales = dias_diferencia - dias_trabajados_anteriores-1
         else:
-            dias_trabajados_actuales = dias_diferencia
+            dias_trabajados_actuales = dias_diferencia-1
         
         return dias_trabajados_anteriores, dias_trabajados_actuales, antiguedad_dias
     
@@ -494,7 +522,7 @@ class CalculosGenerales(HttpRequest):
         #tener encuenta los ultimos salrios devengados que incluyen, horas extras,auxilio de trasnporte,
         # comisiones,recargos
         cesantias=(salario_base_transpor*dias_trabajados_actuales)/360
-        interes_cesantias=(cesantias*dias_trabajados_actuales)/360
+        interes_cesantias=(cesantias*dias_trabajados_actuales*0.12)/360
         return cesantias,interes_cesantias
         
     def calculoVacaciones(salario_base,dias_antiguedad):
@@ -531,9 +559,10 @@ class CalculosGenerales(HttpRequest):
                 if (suma_total or 0) + (novedad.HorasExDiu or 0) + (novedad.HorasExNoc or 0) + \
                 (novedad.HorasExFestivaNoc or 0) + (novedad.HorasExFestivaDiu or 0) > limite_maximo_horas:
                     error_message = f"La suma de horas excede el límite máximo permitido de {limite_maximo_horas} horas en el mes."
-                    return render(request, 'empresarial/novedadesForm.html', {'formularioNov': formularioNov, 'error_message': error_message})
                 
+                    return render(request, 'empresarial/novedadesForm.html', {'formularioNov': formularioNov, 'error_message': error_message})
                 novedad.save()
+                    
                 return redirect('ListarEmpleados', nit=empleado.empresa.nit)
         else:
             formularioNov = NovedadesForm()
@@ -590,6 +619,7 @@ class CalculosGenerales(HttpRequest):
                 'recargoNoc': calculo.recargoNoc,
                 'recargoNocFest': calculo.recargoNocFest,
                 'salario_total': salario_total,
+                'calculo':calculo
             }
                         
         return render(request, 'empresarial/historialNomina.html', context)

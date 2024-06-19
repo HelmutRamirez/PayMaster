@@ -8,21 +8,21 @@
   <link rel="stylesheet" href="{% static 'css/tablas.css' %}">
   <link rel="stylesheet" href="{% static 'css/home.css' %}">
   <link rel="shortcut icon" href="{% static 'image/logo2.png' %}" type="image/x-icon">
-  <script src="{% static 'js/session_monitor.js' %}"></script>
+  
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
     var idleTime = 0;
 
     function timerIncrement() {
       idleTime++;
-      if (idleTime > 1) { // 1 minuto
+      if (idleTime > 2) { // 1 minuto
         window.location.href = "{% url 'cerrar_sesion_redirect_e' %}";
       }
     }
 
     $(document).ready(function () {
       // Increment the idle time counter every minute.
-      var idleInterval = setInterval(timerIncrement, 100000); // 1 minuto
+      var idleInterval = setInterval(timerIncrement, 10000); // 1 minuto
 
       // Reset the idle timer on mouse movement or key press.
       $(this).mousemove(function (e) {
