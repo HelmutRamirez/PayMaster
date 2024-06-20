@@ -26,7 +26,7 @@ class GestionLogin:
         if request.method == 'POST':
             form = RecuperarContrasenaForm(request.POST)  # Crear una instancia del formulario con los datos POST
             if form.is_valid():
-                numero_identificacion = form.cleaned_data['numero_identificacion']  # Obtener el número de identificación del formulario
+                numero_identificacion = form.cleaned_data['numero_identificacion']  # Obtener el numero de identificacion del formulario
 
                 try:
                     usuario = Empleado.objects.get(numero_identificacion=numero_identificacion)  # Buscar al usuario por su número de identificación
@@ -66,13 +66,13 @@ class GestionLogin:
                     reset_request = PasswordResetRequest.objects.get(token=token, used=False)  # Buscar la solicitud de restablecimiento de contraseña por el token y que no haya sido usada
                 except PasswordResetRequest.DoesNotExist:
                     reset_request = None
-
+                #aca se se hace la validacion de la contraseña para que se le aplique 
                 if new_password != confirm_password:
                     messages.error(request, 'Las contraseñas no coinciden.')
                 else:
                     if len(new_password) < 6:
                         messages.error(request, 'La contraseña debe tener al menos 6 caracteres.')
-                    elif not re.search(r'[A-Za-z]', new_password):
+                    elif not re.search(r'[A-Za-z]', new_password):# el re.search busca un patrón dentro de una cadena.
                         messages.error(request, 'La contraseña debe contener al menos una letra.')
                     elif not re.search(r'[A-Z]', new_password):
                         messages.error(request, 'La contraseña debe contener al menos una letra mayúscula.')
@@ -159,32 +159,25 @@ class GestionLogin:
             form = LoginForm()  # Crear una instancia vacía del formulario
 
         return render(request, 'empresarial/login.html', {'form': form})  # Renderizar la plantilla con el formulario
-# def editarIndependiente(request, numero_identificacion):
-#     try:
-#         empleado = Empleado.objects.get(pk=numero_identificacion)
-#         formulario = IndependienteForm(instance=empleado)
-#         return render(request, 'empresarial/editarIndependi.html', {"form": formulario, "empleado": empleado})
-#     except Independiente.DoesNotExist:
-#         messages.error(request, 'No se encontró el perfil de Independiente asociado')
-#         return redirect('home')
+
 
     
 
 
 
-def cerrar_sesion(request):
-    # Función para cerrar la sesión del usuario mediante una solicitud POST
-    if request.method == 'POST':
+    def cerrar_sesion(request):
+        # Función para cerrar la sesión del usuario mediante una solicitud POST
+        if request.method == 'POST':
+            logout(request)  # Cierra la sesión actual del usuario
+            request.session.flush()  # Limpia todos los datos de la sesión
+            return JsonResponse({'status': 'ok'})  # Retorna un JSON de estado exitoso
+        return JsonResponse({'status': 'error'}, status=400)  # Retorna un JSON de error si no es POST
+
+    def cerrar_sesion_redirect(request):
+        # Función para cerrar la sesión del usuario y redirigir a la página de login
         logout(request)  # Cierra la sesión actual del usuario
         request.session.flush()  # Limpia todos los datos de la sesión
-        return JsonResponse({'status': 'ok'})  # Retorna un JSON de estado exitoso
-    return JsonResponse({'status': 'error'}, status=400)  # Retorna un JSON de error si no es POST
-
-def cerrar_sesion_redirect(request):
-    # Función para cerrar la sesión del usuario y redirigir a la página de login
-    logout(request)  # Cierra la sesión actual del usuario
-    request.session.flush()  # Limpia todos los datos de la sesión
-    return redirect('loginEmpresa')  # Redirige a la vista 'loginEmpresa'
+        return redirect('loginEmpresa')  # Redirige a la vista 'loginEmpresa'
 
 def keep_session_alive(request):
     # Función para verificar si la sesión del usuario está activa mediante una solicitud GET
@@ -268,17 +261,37 @@ class GestionEmpleado(HttpRequest):
     def editarEmpleado(request, numero_identificacion):
         empleado = Empleado.objects.get(pk=numero_identificacion)
         formulario = EmpleadoForm(instance=empleado)
-        return render(request, 'empresarial/editarEmpleado.html', {"form": formulario, "empleado": empleado})
+        return render(request, 'empresarial/editarEmpleado.html', {"form": formulario, "empleado": empleado,"numero_identificacion":numero_identificacion})
         # Renderiza el formulario de edición de empleado ('editarEmpleado.html')
 
     def actualizarEmpleado(request, numero_identificacion):
         empleado = Empleado.objects.get(pk=numero_identificacion)
         formulario = EmpleadoForm(request.POST, instance=empleado)
-        if formulario.is_valid():
-            formulario.save()
-        empleados = Empleado.objects.all()
-        return render(request, 'empresarial/listarEmpleado.html', {"get_empleados": empleados})
+        empresa=empleado.empresa.nit
+      
+        formulario.save()
+        empleado = Empleado.objects.all()
+        empresa = Empresa.objects.get(nit=empresa)
+        get_empleados = Empleado.objects.filter(empresa=empresa)
+                    
+        empleados_con_antiguedad = []
+        for empleado in get_empleados:
+                        fecha_ingreso = empleado.fecha_ingreso
+                        dias_trabajados_anteriores, dias_trabajados_actuales, antiguedad_dias = CalculosGenerales.diasTrabajados(fecha_ingreso)
+                        empleados_con_antiguedad.append({
+                            'empleado': empleado,
+                            'antiguedad': antiguedad_dias
+                        })
+                    
+        data = {
+                        'empleados_con_antiguedad': empleados_con_antiguedad,
+                        'empresa': empresa
+                    }
+        return render(request, 'empresarial/listarEmpleado.html', data)
+        
+        
         # Actualiza los datos del empleado y luego renderiza la lista actualizada de empleados ('listarEmpleado.html')
+
 
     def eliminarEmpleado(request, numero_identificacion):
         empleado = Empleado.objects.get(pk=numero_identificacion)

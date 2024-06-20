@@ -2,8 +2,8 @@
 from datetime import timedelta
 from django import forms   # type: ignore 
 from .models import Empleado,Usuarios,Empresa, Calculos, Novedades
-from django.core.exceptions import ValidationError
-from django.utils import timezone
+from django.core.exceptions import ValidationError # type: ignore
+from django.utils import timezone # type: ignore
 
 class EmpresaForm(forms.ModelForm):
     class Meta:
@@ -55,6 +55,8 @@ class EmpleadoForm(forms.ModelForm):
                 self.add_error('fecha_exp_documento', 'La fecha de expedición del documento debe ser al menos 18 años después de la fecha de nacimiento.')
         return cleaned_data
             
+
+        #Este codigo permite bloquear los espacios pero afecta cuando se va a registrar un nuevo empleado, entonces hace falta adaptarlo solo para el fomrulario de modificar
         # ['numero_identificacion', 'primer_nombre', 'segundo_nombre', 'primer_apellido', 'segundo_apellido', 'estado_civil']
 
     # def __init__(self, *args, **kwargs):

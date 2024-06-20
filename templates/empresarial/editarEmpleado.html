@@ -18,13 +18,14 @@
       {% if request.session.permisos == 'RRHH' or request.session.permisos == 'Admin' %}
         <div class="contenedor">
           <h1>Editar Empleado</h1>
+          
           <form action="{% url 'actualizarEmpleado' empleado.numero_identificacion %}" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form }}
             <button type="submit" id="btnEnviar" class="button">Modificar</button>
           </form>
           <div class="volverB">
-            <a class="link" href="{% url 'ListarEmpleados' empleado.empresa.nit %}">Volver</a>
+            <a class="link" href="{% url 'ListarEmpleados' empleado.empresa.nit %}">Volver</a> 
           </div>
         </div>
       {% else %}

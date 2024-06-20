@@ -35,7 +35,9 @@
             {{ form }}
             <button type="submit" id="btnEnviar" class=button>ENVIAR</button>
         </form> 
-        <a class="link" href="{% url 'homeEmpresa' %}">Volver</a>
+        <a class="link" href="{% url 'ListarEmpleados' empresa %}">Volver al home empleados</a>
+
+        <a class="link" href="{% url 'ListarEmpresa' %}">Volver al home empresa</a>
     </div>
 </body>
 </html>
