@@ -1,6 +1,9 @@
 
+from datetime import timedelta
 from django import forms   # type: ignore 
 from .models import Empleado,Usuarios,Empresa, Calculos, Novedades
+from django.core.exceptions import ValidationError # type: ignore
+from django.utils import timezone # type: ignore
 
 class EmpresaForm(forms.ModelForm):
     class Meta:
@@ -10,9 +13,50 @@ class EmpresaForm(forms.ModelForm):
 class EmpleadoForm(forms.ModelForm):
     class Meta:
         model = Empleado
-        fields ='__all__'
-        
-        
+        fields = [
+            'numero_identificacion', 'primer_nombre', 'segundo_nombre',
+            'primer_apellido', 'segundo_apellido', 'estado_civil', 'tipo_documento',
+            'correo', 'celular', 'genero', 'salario', 'fecha_nacimiento', 
+            'fecha_exp_documento','fecha_ingreso','nivel_riesgo','salario','empresa', 'imagen'
+        ]
+        widgets = {
+            'empresa': forms.HiddenInput(),
+            'fecha_nacimiento': forms.DateInput(attrs={'type': 'date'}, format='%Y-%m-%d'),
+            'fecha_exp_documento': forms.DateInput(attrs={'type': 'date'}, format='%Y-%m-%d'),
+            'fecha_ingreso': forms.DateInput(attrs={'type': 'date'}, format='%Y-%m-%d'),
+        }
+    
+    def clean_fecha_nacimiento(self):
+        fecha_nacimiento = self.cleaned_data.get('fecha_nacimiento')
+        if fecha_nacimiento:
+            hoy = timezone.now().date()
+            edad_minima = hoy - timedelta(days=18*365)
+            if fecha_nacimiento > edad_minima:
+                raise ValidationError('La fecha de nacimiento debe ser al menos 18 años antes de hoy.')
+        return fecha_nacimiento
+
+    def clean_fecha_exp_documento(self):
+        fecha_nacimiento = self.cleaned_data.get('fecha_nacimiento')
+        fecha_exp_documento = self.cleaned_data.get('fecha_exp_documento')
+        if fecha_nacimiento and fecha_exp_documento:
+            edad_minima_exp = fecha_nacimiento + timedelta(days=18*365)
+            if fecha_exp_documento < edad_minima_exp:
+                raise ValidationError('La fecha de expedición del documento debe ser al menos 18 años después de la fecha de nacimiento.')
+        return fecha_exp_documento
+
+    def clean(self):
+        cleaned_data = super().clean()
+        fecha_nacimiento = cleaned_data.get('fecha_nacimiento')
+        fecha_exp_documento = cleaned_data.get('fecha_exp_documento')
+
+        if fecha_nacimiento and fecha_exp_documento:
+            edad_minima_exp = fecha_nacimiento + timedelta(days=18*365)
+            if fecha_exp_documento < edad_minima_exp:
+                self.add_error('fecha_exp_documento', 'La fecha de expedición del documento debe ser al menos 18 años después de la fecha de nacimiento.')
+        return cleaned_data
+            
+
+        #Este codigo permite bloquear los espacios pero afecta cuando se va a registrar un nuevo empleado, entonces hace falta adaptarlo solo para el fomrulario de modificar
         # ['numero_identificacion', 'primer_nombre', 'segundo_nombre', 'primer_apellido', 'segundo_apellido', 'estado_civil']
 
     # def __init__(self, *args, **kwargs):

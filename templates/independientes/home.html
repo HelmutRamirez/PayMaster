@@ -9,9 +9,8 @@
     <link rel="stylesheet" href="{% static 'css/tablas.css' %}">
     <link rel="shortcut icon" href="{% static 'image/logo2.png' %}" type="image/x-icon">
     <title>Permisos del Usuario</title>
-    
 </head>
-<>
+<body>
     <div class="contenedor">
         {% if request.session.estadoSesion %}
             {% if request.session.permisos == 'Independiente' %}
@@ -19,7 +18,7 @@
                 {% if independi %}
                     <h1>Bienvenido {{ independi.primer_nombre }}</h1>
                     
-                    <table border="1">
+                    <table>
                         <tr>
                             <th>Identificación</th>
                             <th>Nombre</th>
@@ -33,11 +32,12 @@
                             <td>{{ independi.celular }}</td>
                             <td><img src="{{ independi.imagen.url }}" alt="Imagen" width="50"></td>
                             <td>
-                                <a class="a"  href="{% url 'editarIndependiente' independi.numero_identificacion %}" class="btn btn-info">Editar datos</a>
-                                <a class="a"  href="{% url 'eliminaremple' independi.numero_identificacion %}" class="btn btn-danger">Eliminar</a>
-                                <a class="a"  href="{% url 'calcularinde' independi.numero_identificacion %}" class="btn btn-primary">Calcular</a>
-                            </td>
-                        
+                                <a class="a" href="{% url 'editarIndependiente' independi.numero_identificacion %}">Editar datos</a>
+                                <a class="a" href="#" onclick="confirmDelete(event, '{% url 'eliminaremple' independi.numero_identificacion %}')">Eliminar</a>
+                                <a class="a" href="{% url 'calcularinde' independi.numero_identificacion %}">Calcular</a>
+                                {% comment %} <a class="a" href="{% url 'todos_los_calculos' independi.numero_identificacion %}">Ver nomina</a>
+                            {% endcomment %}
+                        </td> 
                         </tr>
                     </table>
 
@@ -46,19 +46,26 @@
                         <button class="link cerrar" type="submit">Cerrar Sesión</button>
                     </form>
                 </div>
-                
-            {% else %}
-                <h1>El usuario {{ request.user.username }} no tiene perfil de Independiente</h1>
-            {% endif %}
+                    
+                {% else %}
+                    <a class="link" href="{% url 'registrarIndependiente' %}">El usuario {{ request.user.username }} no tiene cuenta de Independiente</a>
+                {% endif %}
 
+            {% else %}
+                <h1>El usuario no tiene permisos</h1>
+            {% endif %}
         {% else %}
-            <h1>El usuario no tiene permisos</h1>
+            <h1>El usuario no ha iniciado sesión</h1>
         {% endif %}
-    {% else %}
-        <h1>El usuario no ha iniciado sesión</h1>
-    {% endif %}
 
     <script>
+        function confirmDelete(event, url) {
+            event.preventDefault();
+            if (confirm("¿Está seguro de que desea eliminar este registro?")) {
+                window.location.href = url;
+            }
+        }
+
         window.addEventListener('popstate', function(event) {
             // Prevenir el comportamiento por defecto
             event.preventDefault();

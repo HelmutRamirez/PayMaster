@@ -22,7 +22,7 @@
                     <form action="{% url 'actualizarIndependiente' independi.numero_identificacion %}" method="POST" enctype="multipart/form-data">
                         {% csrf_token %}
                         {{ form.as_p }}
-                        <button type="submit" class="btn btn-primary">Modificar</button>
+                        <button class="boton" type="submit">Modificar</button>
                     </form>
                 {% else %}
                     <h2>El usuario no encontrado</h2>
@@ -32,30 +32,9 @@
             {% endif %}
         {% else %}
             <h2>El usuario no ha iniciado sesión</h2>
+            <a class="link" href="{% url 'login' %}">Iniciar sesión XD</a>
         {% endif %}
-        <a href="{% url 'homeIndependiente' %}" class="btn btn-danger">Volver</a>
+        <a class="link" href="{% url 'homeIndependiente' %}">Volver</a>
     </div>
-
-    <script>
-        window.addEventListener('beforeunload', function(event) {
-        
-            fetch('{% url "cerrar_sesion" %}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}'
-                },
-                body: JSON.stringify({})
-            }).then(response => {
-                if (response.ok) {
-                 
-                    window.location.href = '{% url "login" %}';
-                }
-            }).catch(error => {
-                console.error('Error al cerrar sesión:', error);
-               
-            });
-        });
-    </script>
 </body>
 </html>

@@ -24,6 +24,27 @@ class Independiente(models.Model):
         ('O', 'Otro'),
         ('P', 'Prefiero no decir'),
     ]
+    ccf=[
+        ('Ninguna','Ninguna'),
+        ('Compensar', 'Compensar'),
+        ('Colsubcidio', 'Colsubcidio'),
+        ('Cafam', 'Cafam'),
+        ('Cofrem', 'Cofrem'),
+        ('Comfacesar', 'Comfacesar'),
+    ]
+    arl=[ ('Ninguna','Ninguna'),
+        ('CIA. DE SEGUROS BOLIVAR S.A.	','CIA. DE SEGUROS BOLIVAR S.A.	'),
+        ('COMPAÑIA DE SEGUROS DE VIDA AURORA	', 'COMPAÑIA DE SEGUROS DE VIDA AURORA	'),
+        ('COMPAÑIA SURAMERICANA ADMINISTRADORA DE RIESGOS PROFESIONALES Y SEGUROS VIDA	', 'COMPAÑIA SURAMERICANA ADMINISTRADORA DE RIESGOS PROFESIONALES Y SEGUROS VIDA	'),
+        ('LA EQUIDAD SEGUROS DE VIDA ORGANISMO COOPERATIVO – LA EQUIDAD VIDA', 'LA EQUIDAD SEGUROS DE VIDA ORGANISMO COOPERATIVO – LA EQUIDAD VIDA'),
+        ('MAPFRE COLOMBIA VIDA SEGUROS S', 'MAPFRE COLOMBIA VIDA SEGUROS S'),
+        ('POSITIVA COMPAÑIA DE SEGUROS', 'POSITIVA COMPAÑIA DE SEGUROS'),
+        ('RIESGOS PROFESIONALES COLMENA S.A COMPAÑÍA DE SEGUROS DE VIDA', 'RIESGOS PROFESIONALES COLMENA S.A COMPAÑÍA DE SEGUROS DE VIDA'),
+        ('SEGUROS DE VIDA ALFA S.A.', 'SEGUROS DE VIDA ALFA S.A.'),
+        ('SEGUROS DE VIDA COLPATRIA S.A.', 'SEGUROS DE VIDA COLPATRIA S.A.'),
+        
+        
+    ]
 
     numero_identificacion = models.IntegerField(primary_key=True)
     primer_nombre = models.CharField(max_length=30)
@@ -35,8 +56,11 @@ class Independiente(models.Model):
     correo = models.EmailField(unique=True)
     celular = models.CharField(max_length=15)
     genero = models.CharField(max_length=10,choices=genero)
+    salario=models.FloatField(validators=[MinValueValidator(1300000)],default=1300000)
     fecha_nacimiento = models.DateField()
     fecha_exp_documento = models.DateField()
+    caja_comprensacion= models.CharField(max_length=80, choices=ccf, default='Ninguna',blank=True, null=True)
+    riesgos_laborales= models.CharField(max_length=80, choices=arl, default='Ninguna',blank=True, null=True)
     imagen=models.ImageField(upload_to='photos')
 
     def __str__(self):
@@ -49,7 +73,7 @@ class Usuarios(models.Model):
 
     usuario = models.ForeignKey(Independiente, on_delete=models.CASCADE)
     intentos = models.IntegerField(default=0)
-    estado_u = models.BooleanField(default=True)
+    estado_u = models.BooleanField(default=False)
     contrasena = models.CharField(max_length=120, null=True)
     id_rol = models.CharField(max_length=30, choices=id_rol_choices)
 
@@ -86,7 +110,7 @@ class Calculos(models.Model):
     
 class DatosCalculos(models.Model):
     
-    arl=[
+    arlN=[
         ('0', 'Ninguno'),
         ('1', 'Nivel 1'),
         ('2', 'Nivel 2'),
@@ -94,34 +118,36 @@ class DatosCalculos(models.Model):
         ('4', 'Nivel 4'),
         ('5', 'Nivel 5'), 
     ]
-    CCF=[
-        ('Ninguna ', 'Ninguno'),
-        ('Si', 'Si'),
+    
+    ccf=[
+        ('Ninguna','Ninguna'),
+        ('Compensar', 'Compensar'),
+        ('Colsubcidio', 'Colsubcidio'),
+        ('Cafam', 'Cafam'),
+        ('Cofrem', 'Cofrem'),
+        ('Comfacesar', 'Comfacesar'),
     ]
-    salud=[
-        ('12,5', '12,5'),
+    arl=[('Ninguna','Ninguna'),
+        ('CIA. DE SEGUROS BOLIVAR S.A.	','CIA. DE SEGUROS BOLIVAR S.A.	'),
+        ('COMPAÑIA DE SEGUROS DE VIDA AURORA	', 'COMPAÑIA DE SEGUROS DE VIDA AURORA	'),
+        ('COMPAÑIA SURAMERICANA ADMINISTRADORA DE RIESGOS PROFESIONALES Y SEGUROS VIDA	', 'COMPAÑIA SURAMERICANA ADMINISTRADORA DE RIESGOS PROFESIONALES Y SEGUROS VIDA	'),
+        ('LA EQUIDAD SEGUROS DE VIDA ORGANISMO COOPERATIVO – LA EQUIDAD VIDA', 'LA EQUIDAD SEGUROS DE VIDA ORGANISMO COOPERATIVO – LA EQUIDAD VIDA'),
+        ('MAPFRE COLOMBIA VIDA SEGUROS S', 'MAPFRE COLOMBIA VIDA SEGUROS S'),
+        ('POSITIVA COMPAÑIA DE SEGUROS', 'POSITIVA COMPAÑIA DE SEGUROS'),
+        ('RIESGOS PROFESIONALES COLMENA S.A COMPAÑÍA DE SEGUROS DE VIDA', 'RIESGOS PROFESIONALES COLMENA S.A COMPAÑÍA DE SEGUROS DE VIDA'),
+        ('SEGUROS DE VIDA ALFA S.A.', 'SEGUROS DE VIDA ALFA S.A.'),
+        ('SEGUROS DE VIDA COLPATRIA S.A.', 'SEGUROS DE VIDA COLPATRIA S.A.'),
+        
+        
     ]
-    pension=[
-        ('16', '16'),
-    ]
+    
     documento = models.ForeignKey(Independiente, on_delete=models.CASCADE)
-    salarioBase=models.FloatField(null=True, blank=True)
-    ibc=models.FloatField(validators=[MaxValueValidator(100),MinValueValidator(40)],null=True)
+    salarioBase=models.FloatField(validators=[MinValueValidator(1300000)],default=1300000)
+    ibc=models.FloatField(validators=[MaxValueValidator(100),MinValueValidator(40)],default=40)
     salud=models.FloatField( max_length=50, default=12.5)
     pension=models.FloatField(max_length=50, default=16)
-    arl=models.CharField(blank=True,null=True, choices=arl, max_length=50)
-    CCF=models.CharField(blank=True,null=True, choices=CCF, max_length=50)
+    riesgos_laborales= models.CharField(max_length=100, choices=arl, default='Ninguna',blank=True, null=True)
+    arl=models.CharField(max_length=20,blank=True,null=True, choices=arlN,default='0')
+    caja_comprensacion= models.CharField(max_length=100, choices=ccf, default='Ninguna',blank=True, null=True)
+    CCF=models.CharField(max_length=20,blank=True,null=True, choices=ccf,default='Ninguna')
     FSP=models.FloatField(blank=True,null=True)
-    
-    
-    
-class Novedades(models.Model):
-    empleado = models.ForeignKey(Independiente, on_delete=models.CASCADE)
-    HorasExDiu=models.IntegerField(validators=[MaxValueValidator(48),MinValueValidator(0)],blank=True,null=True)
-    HorasExNoc=models.IntegerField(validators=[MaxValueValidator(48),MinValueValidator(0)],blank=True,null=True)
-    HorasExFestivaDiu=models.IntegerField(validators=[MaxValueValidator(48),MinValueValidator(0)],blank=True,null=True)
-    HorasExFestivaNoc=models.IntegerField(validators=[MaxValueValidator(48),MinValueValidator(0)],blank=True,null=True)
-    
-    recargoDiuFes=models.IntegerField(blank=True,null=True)
-    recargoNoc=models.IntegerField(blank=True,null=True)
-    recargoNocFest=models.IntegerField(blank=True,null=True)

@@ -61,7 +61,8 @@ class Empleado(models.Model):
     fecha_exp_documento = models.DateField()
     fecha_ingreso = models.DateField(null=True)
     nivel_riesgo=models.CharField(max_length=10, choices=nivel_riesgo,null=True)
-    salario=models.FloatField(validators=[MinValueValidator(1300000)],null=True)
+    antiguedad = models.FloatField(validators=[MinValueValidator(0.0)],null=True)
+    salario=models.FloatField(validators=[MinValueValidator(1300000)],default=1300000,null=True)
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE,blank=True, null=True) 
     imagen=models.ImageField(upload_to='photos')
 
@@ -72,6 +73,7 @@ class Empleado(models.Model):
 
 class Usuarios(models.Model):
     id_rol=[
+        ('Admin', 'Admin'),
         ('Contador', 'Contador'),
         ('Auxiliar Contable', 'Auxiliar Contable'),
         ('RRHH', 'RRHH'),
@@ -109,7 +111,9 @@ class PasswordResetRequest(models.Model):
 class Calculos(models.Model):
     documento = models.ForeignKey('Empleado', on_delete=models.CASCADE)
     salud = models.FloatField(validators=[MinValueValidator(0.0)],null=True)
+    salud_empeador=models.FloatField(validators=[MinValueValidator(0.0)],null=True)
     pension = models.FloatField(validators=[MinValueValidator(0.0)],null=True)
+    pension_empleador=models.FloatField(validators=[MinValueValidator(0.0)],null=True)
     arl = models.FloatField(validators=[MinValueValidator(0.0)],null=True)
     transporte = models.FloatField(validators=[MinValueValidator(0.0)],null=True)
     salarioBase = models.FloatField(validators=[MinValueValidator(0.0)],null=True)
@@ -120,6 +124,7 @@ class Calculos(models.Model):
     cesantias = models.FloatField(validators=[MinValueValidator(0.0)],null=True)
     interesCesantias = models.FloatField(validators=[MinValueValidator(0.0)],null=True)
     vacaciones = models.FloatField(validators=[MinValueValidator(0.0)],null=True)
+    antiguedad = models.FloatField(validators=[MinValueValidator(0.0)],null=True)
     dias_vacaciones = models.FloatField(validators=[MinValueValidator(0.0)],null=True)
     HorasExDiu=models.IntegerField(blank=True,null=True)
     HorasExNoc=models.IntegerField(blank=True,null=True)

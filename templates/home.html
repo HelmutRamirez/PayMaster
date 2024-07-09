@@ -5,10 +5,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}">
+    
     <link rel="shortcut icon" href="{% static 'image/logo2.png' %}" type="image/x-icon">
+
     <title>PayMaster</title>
 </head>
-<body>
+<body onload="mostrarModalCookies()">
+    <div id="modalCookies" class="modal">
+        <div class="modal-content">
+            <h2>Aceptar Cookies</h2>
+            <p>Este sitio web utiliza cookies para mejorar la experiencia del usuario. Acepta el uso de cookies para continuar navegando por el sitio.</p>
+            <div class="cookies-btn">
+                <a onclick="aceptarCookies()">Aceptar</a>
+                <a onclick="rechazarCookies()">Rechazar</a>
+            </div>
+
+        </div>
+    </div>
     <div class="menu">
         <a href="#inicio"><img class="logo" src="{% static 'image/logo2.png' %}" alt="PayMaster"></a>
         <div class="encabezados">
@@ -61,11 +74,25 @@
             <p>ADSO 2672364</p>
         </div>
         <div class="pie2">
-            <p>Diiego Camiino</p>
+            <p>Diego Camino</p>
             <p>Vanessa Garcia</p>
             <p>Helmut Ramirez</p>
         </div>
     </div>
+    <script>
+        function mostrarModalCookies() {
+            var modal = document.getElementById('modalCookies');
+            modal.style.display = 'flex';
+        }
 
+        function aceptarCookies() {
+            var modal = document.getElementById('modalCookies');
+            modal.style.display = 'none';
+        }
+
+        function rechazarCookies() {
+            window.location.href = 'https://www.google.com'
+        }
+    </script>
 </body>
 </html>

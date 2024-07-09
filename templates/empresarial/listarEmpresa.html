@@ -6,67 +6,75 @@
   <meta charset="UTF-8">
   <title>Empresas</title>
   <link rel="stylesheet" href="{% static 'css/tablas.css' %}">
+  <link rel="stylesheet" href="{% static 'css/home.css' %}">
   <link rel="shortcut icon" href="{% static 'image/logo2.png' %}" type="image/x-icon">
-  <script src="{% static 'js/session_monitor.js' %}"></script>
+  
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
     var idleTime = 0;
 
     function timerIncrement() {
-      idleTime++;
-      if (idleTime > 1) { // 1 minuto
-        window.location.href = "{% url 'cerrar_sesion_redirect_e' %}";
-      }
+        idleTime++;
+        if (idleTime > 2) { 
+            alert('Su sesión ha expirado. Será redirigido para cerrar sesión.');
+            window.location.href = "{% url 'cerrar_sesion_redirect_e' %}";
+        }
     }
 
     $(document).ready(function () {
-      // Increment the idle time counter every minute.
-      var idleInterval = setInterval(timerIncrement, 100000); // 1 minuto
+        // Increment the idle time counter every 10 seconds.
+        var idleInterval = setInterval(timerIncrement, 10000); // 10 segundos
 
-      // Reset the idle timer on mouse movement or key press.
-      $(this).mousemove(function (e) {
-        idleTime = 0;
-        keepSessionAlive();
-      });
-      $(this).keypress(function (e) {
-        idleTime = 0;
-        keepSessionAlive();
-      });
+        // Reset the idle timer on mouse movement or key press.
+        $(this).mousemove(function (e) {
+            idleTime = 0;
+            keepSessionAlive();
+        });
+        $(this).keypress(function (e) {
+            idleTime = 0;
+            keepSessionAlive();
+        });
     });
 
     function keepSessionAlive() {
-      $.get("{% url 'keep_session_alive' %}");
+        $.get("{% url 'keep_session_alive' %}");
     }
         
     window.addEventListener('popstate', function(event) {
-      // Prevenir el comportamiento por defecto
-      event.preventDefault();
+        // Prevenir el comportamiento por defecto
+        event.preventDefault();
 
-      // Enviar la solicitud POST para cerrar sesión
-      fetch('{% url "cerrar_sesion_redirect_e" %}', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': '{{ csrf_token }}'
-        },
-        body: JSON.stringify({})
-      }).then(response => {
-        if (response.ok) {
-          // Redirigir a la página de inicio de sesión después de cerrar sesión
-          window.location.href = '{% url "loginEmpresa" %}';
-        }
-      }).catch(error => {
-        console.error('Error al cerrar sesión:', error);
-        // Opcional: Manejar errores si es necesario
-      });
+        // Mostrar alerta antes de cerrar sesión
+        alert('Su sesión ha expirado. Será redirigido para cerrar sesión.');
+
+        // Enviar la solicitud POST para cerrar sesión
+        fetch('{% url "cerrar_sesion_redirect_e" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({})
+        }).then(response => {
+            if (response.ok) {
+                // Redirigir a la página de inicio de sesión después de cerrar sesión
+                window.location.href = '{% url "loginEmpresa" %}';
+            }
+        }).catch(error => {
+            console.error('Error al cerrar sesión:', error);
+            // Opcional: Manejar errores si es necesario
+        });
     });
-  </script>
+</script>
 </head>
 <body>
   <div class="contenedor">
     {% if request.session.estadoSesion %}
-      {% if request.session.permisos == 'Contador' or request.session.permisos == 'Auxiliar Contable' or request.session.permisos == 'RRHH' %}
+      {% if request.session.permisos == 'Contador' or request.session.permisos == 'Auxiliar Contable' or request.session.permisos == 'RRHH' or request.session.permisos == 'Admin' %}
         <p class="titulo">Lista de Empresas</p>
+        <h3>Id empleado: {{ request.session.numero_identificacion }}</h3>
+          <h3>Rol: {{ request.session.permisos }}</h3>
+
         <table>
           <tr>
             <th>Nit</th>
@@ -85,25 +93,34 @@
               <td>
                 <img src="{{ empresa.imagen.url }}" alt="Imagen" width="50" />
               </td>
-              {% if request.session.permisos == 'Contador' or request.session.permisos == 'Auxiliar Contable' %}
-              <td>
-                <a class="a" href="{% url 'editarEmpresa' empresa.nit %}">Editar</a>
-                <a class="a" href="{% url 'eliminarempre' empresa.nit %}">Eliminar</a>
-                <a class="a" href="{% url 'ListarEmpleados' empresa.nit %}">Nomina Personal</a>
-              {% endif %}
-              </td>
-              <td>
-              {% if request.session.permisos == 'RRHH' %}
-                <a class="a" href="{% url 'ListarEmpleados' empresa.nit %}">Gestionar Personal</a>
-              {% endif %}
+               <td>
+                    {% if request.session.permisos == 'Contador' or request.session.permisos == 'Auxiliar Contable' or request.session.permisos == 'Admin' %}
+                
+                      <a class="a" href="{% url 'editarEmpresa' empresa.nit %}">Editar</a>
+                      <a class="a" href="{% url 'eliminarempre' empresa.nit %}">Eliminar</a>
+                      <a class="a" href="{% url 'ListarEmpleados' empresa.nit %}">Nomina Personal</a>
+                    {% endif %}
+              
+                    {% if request.session.permisos == 'RRHH' or request.session.permisos == 'Admin' %}
+                      <a class="a" href="{% url 'ListarEmpleados' empresa.nit %}">Gestionar Personal</a>
+                      <a class="a" href="{% url 'registroEmpleado' empresa.nit %}">Registrar Personal</a>
+                    {% endif %}
               </td>
             </tr>
           {% endfor %}
         </table>
-        <div class="volverB">
-          <a class="link" href="{% url 'homeEmpresa' %}">Volver</a>
-        </div>
+              {% if request.session.permisos == 'Contador' or request.session.permisos == 'Auxiliar Contable' or request.session.permisos == 'Admin' %}
+              <div class="volverB">
+              
+                <a class="link" href="{% url 'registroEmpresa' %}">Registrar Empresa</a>
+              </div>
+              {% endif %}
+        <form id="logout-form" method="POST" action="{% url 'cerrar_sesion_redirect_e' %}">
+          {% csrf_token %}
+          <button class="opccion" type="submit">Cerrar Sesion</button>
+        </form>
       </div>
+      
     {% else %}
       <h1>El usuario no tiene permisos</h1>
       <a class="link" href="{% url 'loginEmpresa' %}">Iniciar sesión</a>

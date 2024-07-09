@@ -143,3 +143,71 @@ body{
 .link:hover {
     color: var(--colorAcento);
 }
+
+
+
+
+/* cookies*/
+
+
+
+
+.modal {
+    position: fixed;
+    z-index: 9;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.81);
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: var(--colorPrimario);
+    width: 100%;
+    padding: 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, Helvetica, sans-serif;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+}
+.modal-content h2 {
+    color: var(--colorAcento);
+    font-size: 2rem;
+}
+
+.modal-content p {
+    color: #e4e4e4;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.cookies-btn {
+    height: 8vh;
+    width: 20%;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.cookies-btn a {
+    color: #e4e4e4;
+    border: #e4e4e4 2px solid;
+    border-radius: 20px;
+    display: inline-block;
+    padding: 10px 20px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.5s ease, color 0.5s ease, transform 0.5s ease;
+}
+
+.cookies-btn a:hover {
+    background-color: #e4e4e4;
+    color: var(--colorPrimario);
+    transform: scale(1.1);
+}
